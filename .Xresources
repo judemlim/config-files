@@ -1,0 +1,102 @@
+URxvt.geometry: 135x40
+!URxvt.font: xft:monospace:size=16
+URxvt.font: xft:Hack Nerd Font Mono:size=16
+URxvt.scrollBar: false
+URxvt.iso14755_52: false
+URxvt.iso14755: false
+
+! Tabbing Menu Colours, currently have it disabled
+URxvt.tabbed.tabbar-bg:     0
+URxvt.tabbed.tabbar-fg:     6
+URxvt.tabbed.tab-bg:        0
+URxvt.tabbed.tab-fg:        5
+
+! Extensions
+! Check if I should install clipboard
+URxvt.perl-ext-common: default,resize-font,fullscreen,autocomplete-ALL-the-things
+URxvt.keysym.F11: perl:fullscreen:switch
+!URxvt.keysym.Shift-Control-V: perl:clipboard:paste
+URxvt.keysym.C-Down:  resize-font:smaller
+URxvt.keysym.C-Up:    resize-font:bigger
+URxvt.keysym.M-C-slash:   perl:aAtt:word-complete
+URxvt.keysym.M-question:  perl:aAtt:fuzzy-complete
+URxvt.keysym.M-quotedbl:  perl:aAtt:undo
+
+! Fake Transperancy
+URxvt.transparent: true
+URxvt.shading: 5
+! True Transparency, need to configue compton
+!URxvt.transparent: false
+!URxvt.shading: 5
+!URxvt.depth: 32
+!URxvt.foreground: rgba:0000/0000/1111/cccc
+!URxvt.background: white
+!URxvt.termName: xterm-256color
+
+! -----------------------------------------------------------------------------
+! File: gruvbox-dark.xresources
+! Description: Retro groove colorscheme generalized
+! Author: morhetz <morhetz@gmail.com>
+! Source: https://github.com/morhetz/gruvbox-generalized
+! Last Modified: 6 Sep 2014
+! -----------------------------------------------------------------------------
+! hard contrast: *background: #1d2021
+*background: #282828
+! soft contrast: *background: #32302f
+*foreground: #ebdbb2
+! Black + DarkGrey
+*color0:  #282828
+*color8:  #928374
+! DarkRed + Red
+*color1:  #cc241d
+*color9:  #fb4934
+! DarkGreen + Green
+*color2:  #98971a
+*color10: #b8bb26
+! DarkYellow + Yellow
+*color3:  #d79921
+*color11: #fabd2f
+! DarkBlue + Blue
+*color4:  #458588
+*color12: #83a598
+! DarkMagenta + Magenta
+*color5:  #b16286
+*color13: #d3869b
+! DarkCyan + Cyan
+*color6:  #689d6a
+*color14: #8ec07c
+! LightGrey + White
+*color7:  #a89984
+*color15: #ebdbb2
+
+!! Tomorrow night theme
+!*foreground:   #c5c8c6
+!*background:   #1d1f21
+!*cursorColor:  #aeafad
+!*color0:       #000000
+!*color1:       #912226
+!*color2:       #778900
+!*color3:       #ae7b00
+!*color4:       #1d2594
+!*color5:       #682a9b
+!*color6:       #2b6651
+!*color7:       #929593
+!*color8:       #666666
+!*color9:       #cc6666
+!*color10:      #b5bd68
+!*color11:      #f0c674
+!*color12:      #81a2be
+!*color13:      #b294bb
+!*color14:      #8abeb7
+!*color15:      #ecebec
+!
+!-------- ROFI Color theme {{{
+!------------------------------------------------------
+! https://davedavenport.github.io/rofi/p11-Generator.html
+rofi.color-enabled: true
+rofi.color-window: #000000, #000000, #000000
+rofi.color-normal: #000000, #b3e774, #000000, #b3e774, #000000
+rofi.color-active: #000000, #b3e774, #000000, #b3e774, #000000
+rofi.color-urgent: #000000, #b3e774, #000000, #b3e774, #000000
+! }}}
+

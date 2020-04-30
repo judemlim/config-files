@@ -52,9 +52,6 @@ alias 'family'='xrandr --output HDMI1 --auto --primary --output eDP1 --off --out
 alias 'unissh'='ssh z3463557@cse.unsw.edu.au'
 alias 'unisftp'='sftp z3463557@cse.unsw.edu.au'
 
-# Term specific aliases
-alias 'timetable'='feh ~/timetable.png &'
-
 # Applications
 alias 'obinskit'='/opt/ObinsKit/obinskit &'
 alias 'libre'='libreoffice &' 

@@ -42,7 +42,7 @@
 "xbindkeys_show" 
   control+shift + q
 
-"mlocate home media | rofi -threads 0 -width 50 -dmenu -i -p "locate:" | xargs -r -0 xdg-open"
+"mlocate home media | rofi -threads 0 -width 50 -dmenu -i -p "locate" | xargs -r -0 xdg-open"
   Mod4+Shift+E
 # set directly keycode (here control + f with my keyboard)
 #"xterm"

@@ -24,7 +24,7 @@ URxvt.keysym.M-quotedbl:  perl:aAtt:undo
 
 ! Fake Transperancy
 URxvt.transparent: true
-URxvt.shading: 5
+URxvt.shading: 15
 ! True Transparency, need to configue compton
 !URxvt.transparent: false
 !URxvt.shading: 5

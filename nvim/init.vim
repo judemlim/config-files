@@ -2,6 +2,7 @@
 " ----- Plugins {{{1
 """"""""""""""""""""""""""""""""""""""
 call plug#begin('~/.local/share/nvim/plugged')
+
 """ --- File navigation ---
 Plug 'scrooloose/nerdTree'
 " fuzzy finder
@@ -17,9 +18,6 @@ Plug 'honza/vim-snippets'
 " Git integration
 Plug 'tpope/vim-fugitive'
 
-" FZF, buffer switcher, directory manager
-Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
-
 "Pair up enclosing characters
 Plug 'jiangmiao/auto-pairs'
 
@@ -28,14 +26,9 @@ Plug 'tpope/vim-surround'
 
 " Multi line commentor
 Plug 'scrooloose/nerdcommenter'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'ryanoasis/vim-devicons'
 
 " Debugger
 Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh \| UpdateRemotePlugins' }
-
-"  repeat macros/plugins (I think)
-Plug 'tpope/vim-repeat'
 
 " Terminal improvements
 Plug 'voldikss/vim-floaterm'
@@ -49,11 +42,12 @@ Plug 'dense-analysis/ale'
 """ --- Aesthetics --- 
 " Aesthetic bar for mode tracking
 Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-"Plug 'itchyny/lightline.vim'
+" devicons
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'ryanoasis/vim-devicons'
 "" Color schemes
-Plug 'flazz/vim-colorschemes'
-" Bracket colors - might get rid of these
+Plug 'morhetz/gruvbox'
+" Bracket colors
 Plug 'frazrepo/vim-rainbow'
 
 """ Latex Plugins 
@@ -399,31 +393,3 @@ nnoremap <silent> ,f  :<C-u>CocList files<CR>
 nnoremap <silent> ,b  :<C-u>CocList buffers<CR>
 " grep search for phrase in cwd
 nnoremap <silent> ,g  :<C-u>CocList -I grep<CR>
-
-"function! StatusDiagnostic() abort
-  "let info = get(b:, 'coc_diagnostic_info', {})
-  "if empty(info) | return '' | endif
-  "let msgs = []
-  "if get(info, 'error', 0)
-    "call add(msgs, 'E' . info['error'])
-  "endif
-  "if get(info, 'warning', 0)
-    "call add(msgs, 'W' . info['warning'])
-  "endif
-  "return join(msgs, ' '). ' ' . get(g:, 'coc_status', '')
-"endfunction
-"function! CocCurrentFunction()
-        "return get(b:, 'coc_current_function', '')
-    "endfunction
-
-"let g:lightline = {
-      "\ 'colorscheme': 'wombat',
-      "\ 'active': {
-      "\   'left': [ [ 'mode', 'paste' ],
-      "\             [ 'cocstatus', 'currentfunction', 'readonly', 'filename', 'modified' ] ]
-      "\ },
-      "\ 'component_function': {
-      "\   'cocstatus': 'coc#status',
-      "\   'currentfunction': 'StatusDiagnostic'
-      "\ },
-      "\ }

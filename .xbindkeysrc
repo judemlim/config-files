@@ -38,12 +38,16 @@
 #keystate_scrolllock= enable
 
 # Examples of commands:
-
 "xbindkeys_show" 
   control+shift + q
 
-"mlocate home media | rofi -threads 0 -width 50 -dmenu -i -p "locate" | xargs -r -0 xdg-open"
+"locate home media | rofi -threads 0 -width 50 -dmenu -i -p "locate" | xargs -r -0 xdg-open"
   Mod4+Shift+E
+"locate home media | rofi -threads 0 -width 50 -dmenu -i -p "locate" | xargs -r -0 xdg-open"
+  Mod4+Shift+E
+"cat ~/.config/chromium/Default/Bookmarks | grep -Eo '(http|https)://.*[^\"]' | rofi -threads 0 -width 50 -dmenu -i -p "Bookmark" |  xargs -r -0 xdg-open"
+  Mod4+Shift+B
+
 # set directly keycode (here control + f with my keyboard)
 #"xterm"
 #  c:41 + m:0x4

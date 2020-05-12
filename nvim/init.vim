@@ -47,6 +47,7 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
 "" Color schemes
 Plug 'morhetz/gruvbox'
+
 " Bracket colors
 Plug 'frazrepo/vim-rainbow'
 
@@ -77,6 +78,7 @@ Plug 'prettier/vim-prettier', {
 
 call plug#end()
 
+let g:airline_powerline_fonts = 1 
 """"""""""""""""""""""""""""""""""""""
 " ----- Aliases {{{1
 """"""""""""""""""""""""""""""""""""""
@@ -98,6 +100,8 @@ let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
 """"""""""""""""""""""""""""""""""""""
 " ----- General{{{1
 """"""""""""""""""""""""""""""""""""""
+set title
+set titlestring=Neovim
 syntax on
 set number
 
@@ -122,6 +126,11 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
+nnoremap gwl :call Focus('right', 'l')<CR>
+nnoremap gwh :call Focus('left', 'h')<CR>
+nnoremap gwk :call Focus('up', 'k')<CR>
+nnoremap gwj :call Focus('down', 'j')<CR>
+
 " More natural split opening
 set splitbelow
 set splitright
@@ -133,10 +142,13 @@ filetype plugin indent on
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 
-" More natural terminal mode escape
-tnoremap <Esc> <C-\><C-n> <bar> :FloatermToggle <CR>
-" Easy open and close terminal
+" Toggle floaterm by pressing escape while it is open
+tnoremap <silent> <Esc> <C-\><C-n>:FloatermToggle <CR>
+" integrate vim navigation with I3 
+
+"Easy open and close terminal
 "tnoremap <Space> <Leader>
+let g:python3_host_prog = "/bin/python"
 
 """""""""""""""""""""""""""""""""""""
 " ----- Theme/Color settings {{{1
@@ -179,25 +191,6 @@ set indentkeys-=0#
 nmap <leader>ds :GdbDebugStop <CR>
 
 """"""""""""""""""""""""""""""""""""""
-" ----- Denite configs {{{1
-""""""""""""""""""""""""""""""""""""""
-autocmd FileType denite call s:denite_my_settings()
-function! s:denite_my_settings() abort
-  nnoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
-  nnoremap <silent><buffer><expr> d
-  \ denite#do_map('do_action', 'delete')
-  nnoremap <silent><buffer><expr> p
-  \ denite#do_map('do_action', 'preview')
-  nnoremap <silent><buffer><expr> q
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> i
-  \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <Space>
-  \ denite#do_map('toggle_select').'j'
-endfunction
-
-""""""""""""""""""""""""""""""""""""""
 " ----- Floaterm configs {{{1
 """"""""""""""""""""""""""""""""""""""
 " By default the window floats
@@ -235,8 +228,6 @@ let g:ale_linters = {'cpp': ['clang']}
 """"""""""""""""""""""""""""""""""""""
 " ----- COC.nvim config {{{1
 """"""""""""""""""""""""""""""""""""""
-let g:python3_host_prog = "/home/judemlim/miniconda3/envs/baby-snake/bin/python"
-"let g:python3_host_prog = "/home/judemlim/anaconda3/bin/python"
 " coc-smartf
 nmap f <Plug>(coc-smartf-forward)
 nmap F <Plug>(coc-smartf-backward)

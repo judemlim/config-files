@@ -1,37 +1,33 @@
 URxvt.geometry: 135x40
-!URxvt.font: xft:monospace:size=16
 URxvt.font: xft:Hack Nerd Font Mono:size=16
 URxvt.scrollBar: false
 URxvt.iso14755_52: false
 URxvt.iso14755: false
 
-! Tabbing Menu Colours, currently have it disabled
+! Tabbing Menu Colours
 URxvt.tabbed.tabbar-bg:     0
 URxvt.tabbed.tabbar-fg:     6
 URxvt.tabbed.tab-bg:        0
 URxvt.tabbed.tab-fg:        5
 
+! Tabbedex configs
+URxvt.tabbed.autohide: true
+URxvt.tabbed.reopen-on-close: yes
+!URxvt.keysym.Control-t: perl:tabbedex:new_tab
+!URxvt.keysym.Control-Tab: perl:tabbedex:next_tab
+!URxvt.keysym.Control-Shift-Tab: perl:tabbedex:prev_tab
+
 ! Extensions
 ! Check if I should install clipboard
-URxvt.perl-ext-common: default,resize-font,fullscreen,autocomplete-ALL-the-things
-URxvt.keysym.F11: perl:fullscreen:switch
+URxvt.perl-ext-common: default,resize-font,tabbedex
+!URxvt.keysym.F11: perl:fullscreen:switch
 !URxvt.keysym.Shift-Control-V: perl:clipboard:paste
 URxvt.keysym.C-Down:  resize-font:smaller
 URxvt.keysym.C-Up:    resize-font:bigger
-URxvt.keysym.M-C-slash:   perl:aAtt:word-complete
-URxvt.keysym.M-question:  perl:aAtt:fuzzy-complete
-URxvt.keysym.M-quotedbl:  perl:aAtt:undo
 
 ! Fake Transperancy
-URxvt.transparent: true
-URxvt.shading: 15
-! True Transparency, need to configue compton
-!URxvt.transparent: false
-!URxvt.shading: 5
-!URxvt.depth: 32
-!URxvt.foreground: rgba:0000/0000/1111/cccc
-!URxvt.background: white
-!URxvt.termName: xterm-256color
+!URxvt.transparent: true
+!URxvt.shading: 15
 
 ! -----------------------------------------------------------------------------
 ! File: gruvbox-dark.xresources
@@ -69,27 +65,6 @@ URxvt.shading: 15
 *color7:  #a89984
 *color15: #ebdbb2
 
-!! Tomorrow night theme
-!*foreground:   #c5c8c6
-!*background:   #1d1f21
-!*cursorColor:  #aeafad
-!*color0:       #000000
-!*color1:       #912226
-!*color2:       #778900
-!*color3:       #ae7b00
-!*color4:       #1d2594
-!*color5:       #682a9b
-!*color6:       #2b6651
-!*color7:       #929593
-!*color8:       #666666
-!*color9:       #cc6666
-!*color10:      #b5bd68
-!*color11:      #f0c674
-!*color12:      #81a2be
-!*color13:      #b294bb
-!*color14:      #8abeb7
-!*color15:      #ecebec
-!
 !-------- ROFI Color theme {{{
 !------------------------------------------------------
 ! https://davedavenport.github.io/rofi/p11-Generator.html

@@ -30,10 +30,10 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 #[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+## set variable identifying the chroot you work in (used in the prompt below)
+#if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    #debian_chroot=$(cat /etc/debian_chroot)
+#fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
@@ -118,33 +118,18 @@ if ! shopt -oq posix; then
 fi
 
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/judemlim/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/judemlim/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/judemlim/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/judemlim/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-# staying in study mode (baby-snake)
-conda activate baby-snake
-
 # Set NVIM as the default browser
 export EDITOR=nvim
+
 # Activate VI mode with <ESCAPE>
 #set -o vi
+# if in laptop mode on laptop startup (expecting) then remap ctrl to caplock
+#xrandr | grep "HDMI-1 disconnected" && setxkbmap -option "ctrl:nocaps"
+#xrandr | grep "HDMI-1 connected" && desktop
 
 # set PATH so it includes user's private ~/.local/bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
-trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
-
-
+#trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash

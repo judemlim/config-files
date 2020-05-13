@@ -19,7 +19,8 @@ URxvt.tabbed.reopen-on-close: yes
 
 ! Extensions
 ! Check if I should install clipboard
-URxvt.perl-ext-common: default,resize-font,tabbedex
+! NOTE resize-font conflicts with tabbed/tabbedex; the window doesnt redraw itself
+URxvt.perl-ext-common: default,resize-font
 !URxvt.keysym.F11: perl:fullscreen:switch
 !URxvt.keysym.Shift-Control-V: perl:clipboard:paste
 URxvt.keysym.C-Down:  resize-font:smaller
@@ -65,7 +66,7 @@ URxvt.keysym.C-Up:    resize-font:bigger
 *color7:  #a89984
 *color15: #ebdbb2
 
-!-------- ROFI Color theme {{{
+!-------- ROFI Color theme
 !------------------------------------------------------
 ! https://davedavenport.github.io/rofi/p11-Generator.html
 rofi.color-enabled: true

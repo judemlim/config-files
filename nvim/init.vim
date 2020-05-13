@@ -3,13 +3,8 @@
 """"""""""""""""""""""""""""""""""""""
 call plug#begin('~/.local/share/nvim/plugged')
 
-""" --- File navigation ---
-Plug 'scrooloose/nerdTree'
-" fuzzy finder
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-
-" Improved cursor movement - some conflicts with coc, consider removing
+""" --- General --- 
+" Improved cursor movement
 Plug 'easymotion/vim-easymotion'
 
 " Snippets
@@ -30,33 +25,41 @@ Plug 'scrooloose/nerdcommenter'
 " Debugger
 Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh \| UpdateRemotePlugins' }
 
-" Terminal improvements
+" Floating terminal implementation
 Plug 'voldikss/vim-floaterm'
 
 " language server for intellisense code completion
-" relies on node
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" linter - better linter than coc.nvim
+
+" linter
 Plug 'dense-analysis/ale'
+
+""" --- File navigation ---
+Plug 'scrooloose/nerdTree'
+" fuzzy finder
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 """ --- Aesthetics --- 
 " Aesthetic bar for mode tracking
 Plug 'vim-airline/vim-airline'
+
 " devicons
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
+
 "" Color schemes
 Plug 'morhetz/gruvbox'
 
 " Bracket colors
 Plug 'frazrepo/vim-rainbow'
 
-""" Latex Plugins 
+""" --- Latex Plugins ---
 Plug 'lervag/vimtex'
 Plug 'Konfekt/FastFold'
 Plug 'matze/vim-tex-fold'
 
-""" C Plugins 
+""" --- C Plugins --- 
 "  semi-colon insertion
 Plug 'lfilho/cosco.vim'
 " additional syntax highlighting for cpp
@@ -78,28 +81,11 @@ Plug 'prettier/vim-prettier', {
 
 call plug#end()
 
-let g:airline_powerline_fonts = 1 
-""""""""""""""""""""""""""""""""""""""
-" ----- Aliases {{{1
-""""""""""""""""""""""""""""""""""""""
-" open new terminal window in directory
-command T silent execute '!urxvt &'
-command R silent execute '!urxvt -e ranger&'
-
-""""""""""""""""""""""""""""""""""""""
-" ---- Simple plugin mappings {{{1
-""""""""""""""""""""""""""""""""""""""
-map <C-o> :NERDTreeToggle<CR>
-nmap <leader>m <Plug>(easymotion-prefix)
-let g:NERDTreeFileExtensionHighlightFullName = 1
-let g:NERDTreeExactMatchHighlightFullName = 1
-let g:NERDTreePatternMatchHighlightFullName = 1
-let g:NERDTreeHighlightFolders = 1 " enables folder icon highlighting using exact match
-let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
 
 """"""""""""""""""""""""""""""""""""""
 " ----- General{{{1
 """"""""""""""""""""""""""""""""""""""
+"Set title for compositor transparency exclusions
 set title
 set titlestring=Neovim
 syntax on
@@ -108,7 +94,10 @@ set number
 " Map leader '\' to space
 nmap <Space> <Leader>
 vmap <Space> <Leader>
-"let mapleader=" "
+
+" open new terminal window in directory
+command T silent execute '!urxvt &'
+command R silent execute '!urxvt -e ranger&'
 
 " Fast saving
 nmap <leader>w :w!<cr>
@@ -126,11 +115,6 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-nnoremap gwl :call Focus('right', 'l')<CR>
-nnoremap gwh :call Focus('left', 'h')<CR>
-nnoremap gwk :call Focus('up', 'k')<CR>
-nnoremap gwj :call Focus('down', 'j')<CR>
-
 " More natural split opening
 set splitbelow
 set splitright
@@ -144,11 +128,10 @@ inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 
 " Toggle floaterm by pressing escape while it is open
 tnoremap <silent> <Esc> <C-\><C-n>:FloatermToggle <CR>
-" integrate vim navigation with I3 
 
-"Easy open and close terminal
-"tnoremap <Space> <Leader>
+" Set python3 location
 let g:python3_host_prog = "/bin/python"
+
 
 """""""""""""""""""""""""""""""""""""
 " ----- Theme/Color settings {{{1
@@ -159,6 +142,8 @@ colorscheme gruvbox
 " vim-color brackets on globally
 let g:rainbow_active = 1
 
+" Allow powerline font
+let g:airline_powerline_fonts = 1 
 """"""""""""""""""""""""""""""""""""""
 " ----- Text, tab, folds, and index related {{{1
 """"""""""""""""""""""""""""""""""""""
@@ -185,9 +170,21 @@ set wrap "Wrap lines
 set cindent
 set cinkeys-=0#
 set indentkeys-=0#
-"""
-" ----- Debugger Config {{{1
-"""
+
+""""""""""""""""""""""""""""""""""""""
+" ----- Nerdtree configs {{{1
+""""""""""""""""""""""""""""""""""""""
+map <C-o> :NERDTreeToggle<CR>
+nmap <leader>m <Plug>(easymotion-prefix)
+let g:NERDTreeFileExtensionHighlightFullName = 1
+let g:NERDTreeExactMatchHighlightFullName = 1
+let g:NERDTreePatternMatchHighlightFullName = 1
+let g:NERDTreeHighlightFolders = 1 " enables folder icon highlighting using exact match
+let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
+
+""""""""""""""""""""""""""""""""""""""
+" ----- Debugger config {{{1
+""""""""""""""""""""""""""""""""""""""
 nmap <leader>ds :GdbDebugStop <CR>
 
 """"""""""""""""""""""""""""""""""""""

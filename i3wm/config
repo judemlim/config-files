@@ -277,7 +277,6 @@ exec --no-startup-id thunderbird
 exec --no-startup-id xbindkeys
 exec --no-startup-id unclutter --timeout 2
 # TODO merge this all into one script
-#exec_always --no-startup-id ~/.config/i3/Scripts/xbanish_launch.sh
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec_always --no-startup-id ~/.config/picom/launch.sh
 

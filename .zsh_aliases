@@ -71,7 +71,7 @@ alias 'unisftp'='sftp z3463557@cse.unsw.edu.au'
 
 # Applications
 alias 'libre'='libreoffice &' 
-alias 'nix'='NixNote2-x86_64.AppImage -style=GTK+ &!'
+alias 'nix'='NixNote2-x86_64.AppImage -style=GTK+ >> /dev/null 2>&1 &!'
 
 # Projects
 alias 'website'='cd ~/website'

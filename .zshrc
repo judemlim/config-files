@@ -2,9 +2,10 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 export PATH=~/.local/bin:$PATH
 
+# For nvim shell to become interactive (I think this is what it's called)
+export ZDOTDIR=$HOME
 # Path to your oh-my-zsh installation.
 ZSH=/usr/share/oh-my-zsh/
-
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -114,3 +115,10 @@ source $ZSH/oh-my-zsh.sh
 # load aliases
 source ~/.zsh_aliases
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# for bazel autocompletion
+fpath+=(~/.zsh/completion)
+# so that completion script does not have to parse Bazel's options 
+# repeatedly
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache

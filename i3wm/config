@@ -189,6 +189,9 @@ bindsym $mod+p mode "resize"
 ##### My own customisations #####
 #################################
 
+# Don't focus on window on pop -up 
+#no_focus [tiling]
+
 # Bind lock screen to mod-shift-x 
 bindsym $mod+shift+x exec i3lock --color "#303030"
 

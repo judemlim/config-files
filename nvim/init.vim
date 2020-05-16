@@ -28,15 +28,18 @@ Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh \| UpdateRemotePlugins' }
 " Floating terminal implementation
 Plug 'voldikss/vim-floaterm'
 
-" language server for intellisense code completion
+" Language server for intellisense code completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" linter
+" Linter
 Plug 'dense-analysis/ale'
+
+" Vim sugar for unix shell command
+Plug 'tpope/vim-eunuch'
 
 """ --- File navigation ---
 Plug 'scrooloose/nerdTree'
-" fuzzy finder
+" very useful fuzzy finder
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -79,6 +82,8 @@ Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
 
+""" --- R ---  
+Plug 'jalvesaq/Nvim-R'
 call plug#end()
 
 
@@ -90,6 +95,7 @@ set title
 set titlestring=Neovim
 syntax on
 set number
+set hlsearch
 
 " Map leader '\' to space
 nmap <Space> <Leader>
@@ -115,6 +121,9 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
+" Quick reformat of entire document TODO - check which plugin this is!
+nnoremap <leader>F :Format<CR>
+
 " More natural split opening
 set splitbelow
 set splitright
@@ -126,12 +135,35 @@ filetype plugin indent on
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 
-" Toggle floaterm by pressing escape while it is open
-tnoremap <silent> <Esc> <C-\><C-n>:FloatermToggle <CR>
+" More natural terminal escape
+tnoremap <silent> <Esc> <C-\><C-n><CR>
 
 " Set python3 location
 let g:python3_host_prog = "/bin/python"
 
+" make zsh invocation in vim interactive
+set shell=zsh\ -i
+
+""""""""""""""""""""""""""""""""""""""
+" ----- FZF configs {{{1
+""""""""""""""""""""""""""""""""""""""
+" Mapping h because it sits on my pointing finger - denotive of primary
+nnoremap ,f :Files<CR>  
+nnoremap ,b :Buffers<CR>  
+nnoremap ,C :Commands<CR>  
+nnoremap ,m :Maps<CR>  
+nnoremap ,w :Windows<CR>  
+" Ripgrep
+nnoremap ,r :Rg<CR>  
+" Buffer history
+nnoremap ,h :History<CR>
+" Command history
+nnoremap ,Hc :History:<CR>
+" Search History
+nnoremap ,Hs :History/<CR>
+
+let g:fzf_layout= {'down': '80%'}
+let g:fzf_preview_window = 'up:60%'
 
 """""""""""""""""""""""""""""""""""""
 " ----- Theme/Color settings {{{1
@@ -144,6 +176,33 @@ let g:rainbow_active = 1
 
 " Allow powerline font
 let g:airline_powerline_fonts = 1 
+
+""""""""""""""""""""""""""""""""""""""
+" ----- Vim easymotion config{{{1
+""""""""""""""""""""""""""""""""""""""
+nmap s <Plug>(easymotion-s2)
+nmap t <Plug>(easymotion-t2)
+"
+nmap <leader>m <Plug>(easymotion-prefix)
+"let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+"nmap s <Plug>(easymotion-overwin-f)
+" or
+" `s{char}{char}{label}`
+" Need one more keystroke, bu on average, it may be more comfortable.
+"nmap s <Plug>(easymotion-overwin-f2)
+
+" Turn on case-insensitive feature
+let g:EasyMotion_smartcase = 1
+
+" Line motions
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+"map <Leader>w <Plug>(easymotion-w)
+"map <Leader>e <Plug>(easymotion-e)
+"map <Leader>b <Plug>(easymotion-b)
 """"""""""""""""""""""""""""""""""""""
 " ----- Text, tab, folds, and index related {{{1
 """"""""""""""""""""""""""""""""""""""
@@ -171,11 +230,11 @@ set cindent
 set cinkeys-=0#
 set indentkeys-=0#
 
+
 """"""""""""""""""""""""""""""""""""""
 " ----- Nerdtree configs {{{1
 """"""""""""""""""""""""""""""""""""""
 map <C-o> :NERDTreeToggle<CR>
-nmap <leader>m <Plug>(easymotion-prefix)
 let g:NERDTreeFileExtensionHighlightFullName = 1
 let g:NERDTreeExactMatchHighlightFullName = 1
 let g:NERDTreePatternMatchHighlightFullName = 1
@@ -195,11 +254,11 @@ nmap <leader>ds :GdbDebugStop <CR>
 let g:floaterm_width = 0.9
 let g:floaterm_height = 0.5
 let g:floaterm_position='bottom'
-let g:floaterm_keymap_toggle = '<Leader>t'
+let g:floaterm_keymap_toggle = '<C-Space>' " Replaces alternate backspace
 "let g:floaterm_autoinsert = v:false
-"let g:floaterm_keymap_new = '<Leader>to'
-"let g:floaterm_keymap_next = '<Leader>tn'
-"let g:floaterm_keymap_prev = '<Leader>tp'
+let g:floaterm_keymap_new = '<Leader>to'
+let g:floaterm_keymap_next = '<Leader>tn'
+let g:floaterm_keymap_prev = '<Leader>tp'
 
 """"""""""""""""""""""""""""""""""""""
 " ----- Latex Vim configs {{{1
@@ -220,21 +279,28 @@ map <leader>at :ALEToggle<CR>
 map <leader>an :ALENext<CR>
 "read .tsx files as .ts
 let g:ale_linter_aliases = {'typescriptreact': 'typescript'}
-let g:ale_linters = {'cpp': ['clang']}
+
+" Note to future self, there may be unnecessry double checking with clangtidy's static-analser and clang
+let g:ale_linters = {'cpp': ['clangtidy', 'cppcheck']}
+" Still don't know if i really need clangcheck
+"let g:ale_linters = {'cpp': ['clangtidy','clangcheck','cppcheck']}
+"let g:ale_cpp_clangcheck_executable = 'clang-check'
+"let g:ale_cpp_clangcheck_options = ''
+let g:ale_cpp_clangtidy_checks = ['*', 'cppcoreguidelines-*']
+let g:ale_cpp_clangtidy_executable = 'clang-tidy'
+let g:ale_cpp_clangtidy_options = ''
+let g:ale_cpp_cppcheck_executable = 'cppcheck'
+let g:ale_cpp_cppcheck_options = '--enable=style'
+" Still haven't figured out how to make this work or if i need it whil Coc is running
+"let g:ale_fixers = {'cpp': ['clangtidy','clang-format']}
 
 """"""""""""""""""""""""""""""""""""""
 " ----- COC.nvim config {{{1
 """"""""""""""""""""""""""""""""""""""
-" coc-smartf
-nmap f <Plug>(coc-smartf-forward)
-nmap F <Plug>(coc-smartf-backward)
-nmap ; <Plug>(coc-smartf-repeat)
-"nmap , <Plug>(coc-smartf-repeat-opposite)
-
-augroup Smartf
-  autocmd User SmartfEnter :hi Conceal ctermfg=220 guifg=#8b0000
-  autocmd User SmartfLeave :hi Conceal ctermfg=239 guifg=#504945
-augroup end
+" List of extensions used for book keeping
+" coc-snippets, coc-prettier, coc-marketplace, coc-lists, coc-eslint
+" coc-emmet, coc-vimtex, coc-tsserver, coc-python, coc-json
+" coc-java-debug, coc-java, coc-css, coc-clangd, coc-r-lsp
 
 " TextEdit might fail if hidden is not set.
 set hidden
@@ -358,7 +424,7 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 " provide custom statusline: lightline.vim, vim-airline.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
-" Mappings using CoCList:
+" Mappings using CoCList - Commented out lines means use fzf instead
 " Show all diagnostics.
 nnoremap <silent> ,a  :<C-u>CocList diagnostics<cr>
 " Manage extensions.
@@ -376,8 +442,9 @@ nnoremap <silent> ,k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent> ,p  :<C-u>CocListResume<CR>
 " Files list
-nnoremap <silent> ,f  :<C-u>CocList files<CR>
+"nnoremap <silent> ,f  :<C-u>CocList files<CR>
 " Buffer list
-nnoremap <silent> ,b  :<C-u>CocList buffers<CR>
+"nnoremap <silent> ,b  :<C-u>CocList buffers<CR>
 " grep search for phrase in cwd
-nnoremap <silent> ,g  :<C-u>CocList -I grep<CR>
+"nnoremap <silent> ,g  :<C-u>CocList -I grep<CR>
+

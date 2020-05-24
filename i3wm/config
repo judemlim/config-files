@@ -57,10 +57,11 @@ bindsym $mod+l focus right
 #bindsym $mod+l exec --no-startup-id  ~/.config/i3/i3-vim.sh right
 
 # alternatively, you can use the cursor keys:
-bindsym $mod+Left focus left
+#bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
-bindsym $mod+Right focus right
+#bindsym $mod+Right focus right
+
 
 
 # move focused window
@@ -171,10 +172,10 @@ mode "resize" {
         bindsym $mod+p mode "default"
 
         # resize pre defined
-        bindsym 1 resize set width 33 ppt
-        bindsym 2 resize set width 50 ppt
-        bindsym 3 resize set width 66 ppt
-        bindsym v resize set width 66 ppt
+        bindsym 1 resize set width 33 ppt; mode "default"
+        bindsym 2 resize set width 50 ppt; mode "default"
+        bindsym 3 resize set width 66 ppt; mode "default"
+        bindsym v resize set width 66 ppt; mode "default"
 }
 
 bindsym $mod+p mode "resize"
@@ -188,6 +189,24 @@ bindsym $mod+p mode "resize"
 #################################
 ##### My own customisations #####
 #################################
+# Faster key repeat speed
+exec_always --no-startup-id xset r rate 200 25
+# xset being reset on startup for some reason so delay open
+exec --no-startup-id sleep 60 && xset r rate 200 25
+
+# combining with mx master 3 gestures
+bindsym $mod+Left  exec --no-startup-id rofi -location 0 -show window
+bindsym $mod+Right scratchpad show; move position center
+bindsym control+F10 exec --no-startup-id ~/.config/i3/Scripts/gesture_up.sh
+# gesture kills the window unless the window is chromium. If chromium close tab
+bindsym control+F7 exec --no-startup-id ~/.config/i3/Scripts/gesture_down.sh
+
+# i3 gaps specific
+for_window [class=".*"] border pixel 5
+for_window [class="albert"] border pixel 0
+gaps inner 10 
+gaps outer 15
+#smart_gaps inverse_outer
 
 # Don't focus on window on pop -up 
 #no_focus [tiling]
@@ -201,7 +220,6 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl @DEFAULT_SINK@ toggle # mute sound
 
 # cursor repeat speed
-exec_always --no-startup-id xset r rate 200 25
 
 # Screen brightness controls
 bindsym XF86MonBrightnessUp exec xbacklight -inc 10 # increase screen brightness
@@ -224,7 +242,7 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym $mod+Shift+m move workspace to output left
 
 # Background
-exec_always feh --randomize --bg-scale /home/judemlim/Pictures/System\ images/wallpaper/*
+exec_always --no-startup-id ~/.config/i3/Scripts/refresh_wallpaper.sh
 
 # Lights up num lock and caps
 bindsym --release Caps_Lock exec pkill -SIGRTMIN+11 i3blocks
@@ -247,6 +265,7 @@ bindsym $mod+m [class="Spotify"] scratchpad show; [class="Spotify"] move positio
 # terminal
 for_window [instance="dropdown"] floating enable
 for_window [instance="dropdown"] resize set 65 ppt 75 ppt
+for_window [instance="dropdown"] move postion center
 for_window [instance="dropdown"] move scratchpad
 for_window [instance="dropdown"] border pixel 5
 exec --no-startup-id urxvt -name dropdown 
@@ -254,6 +273,7 @@ exec --no-startup-id urxvt -name dropdown
 # file explorer
 for_window [instance="file_explorer"] floating enable
 for_window [instance="file_explorer"] resize set 65 ppt 75 ppt
+for_window [instance="file_explorer"] move position center
 for_window [instance="file_explorer"] move scratchpad
 for_window [instance="file_explorer"] border pixel 5
 exec --no-startup-id urxvt -name file_explorer -e ranger 
@@ -261,6 +281,7 @@ exec --no-startup-id urxvt -name file_explorer -e ranger
 # time tracker
 for_window [instance="superproductivity"] floating enable
 for_window [instance="superproductivity"] resize set 1000 1000
+for_window [instance="superproductivity"] move position center
 for_window [instance="superproductivity"] move scratchpad
 for_window [instance="superproductivity"] border pixel 5
 exec superproductivity 
@@ -268,6 +289,7 @@ exec superproductivity
 # spotify
 for_window [class="Spotify"] floating enable
 for_window [class="Spotify"] resize set 65 ppt 75 ppt
+for_window [class="Spotify"] move position center
 for_window [class="Spotify"] move scratchpad
 exec --no-startup-id spotify
 
@@ -276,16 +298,13 @@ for_window [class="Thunderbird"] move to workspace $ws10
 
 # autostart apps
 exec --no-startup-id albert
-exec --no-startup-id thunderbird
-exec --no-startup-id xbindkeys
+exec --no-startup-id expressvpn connect && thunderbird
+#exec --no-startup-id xbindkeys
 exec --no-startup-id unclutter --timeout 2
 # TODO merge this all into one script
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec_always --no-startup-id ~/.config/picom/launch.sh
 
-# i3 gaps specific
-for_window [class=".*"] border pixel 5
-for_window [class="albert"] border pixel 0
-gaps inner 10 
-gaps outer 15
-#smart_gaps inverse_outer
+# nvim-R plugin
+for_window [class="R_x11"] floating enable
+#for_window [class="R_x11"] resize set 33 ppt 50 ppt

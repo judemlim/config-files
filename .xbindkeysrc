@@ -48,6 +48,32 @@
 "cat ~/.config/chromium/Default/Bookmarks | grep -Eo '(http|https)://.*[^\"]' | rofi -threads 0 -width 50 -dmenu -i -p "Bookmark" |  xargs -r -0 xdg-open"
   Mod4+Shift+B
 
+ #thumb wheel up => increase volume
+"pactl set-sink-volume @DEFAULT_SINK@ +2%"
+   Shift+b:7
+ #thumb wheel down => lower volume
+"pactl set-sink-volume @DEFAULT_SINK@ -2%"
+   Shift+b:6
+
+ ##thumb wheel up <C-Pgdn>
+#"xdotool key Control_L+Next"
+   #b:7
+ ##thumb wheel down <C-Pgup>
+#"xdotool key Control_L+Prior"
+   #b:6
+
+ ##thumb wheel up <C-Pgdn>
+"~/.config/i3/Scripts/side_scroll.sh prev"
+   b:7
+ #thumb wheel down <C-Pgup>
+"~/.config/i3/Scripts/side_scroll.sh next"
+   b:6
+
+ #Thumb button opens chromium in a new tab (optimise another day)
+"chromium chrome://newtab"
+   Mod4+b:8
+
+# 
 # set directly keycode (here control + f with my keyboard)
 #"xterm"
 #  c:41 + m:0x4

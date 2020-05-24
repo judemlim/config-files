@@ -38,7 +38,8 @@ Plug 'dense-analysis/ale'
 Plug 'tpope/vim-eunuch'
 
 """ --- File navigation ---
-Plug 'scrooloose/nerdTree'
+"Plug 'scrooloose/nerdTree'
+Plug 'tpope/vim-vinegar'
 " very useful fuzzy finder
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -55,7 +56,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'morhetz/gruvbox'
 
 " Bracket colors
-Plug 'frazrepo/vim-rainbow'
+Plug 'luochen1990/rainbow'
 
 """ --- Latex Plugins ---
 Plug 'lervag/vimtex'
@@ -138,7 +139,23 @@ inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 " More natural terminal escape
 tnoremap <silent> <Esc> <C-\><C-n><CR>
 
-" Set python3 location
+" No numbers in terminal
+autocmd Termopen * setlocal nonumber
+
+" Open a buffer in a new tab (zoom in effect)
+function ZoomWindow()
+  let cpos = getpos(".")
+  tabnew %
+  redraw
+  call cursor(cpos[1], cpos[2])
+  normal! zz
+endfunction
+nmap gz :call ZoomWindow()<CR>
+
+" Delete all buffers except the one I'm currently in
+command! BufOnly execute '%bdelete|edit #|normal `"'
+
+"Set python3 location
 let g:python3_host_prog = "/bin/python"
 
 " make zsh invocation in vim interactive
@@ -147,14 +164,13 @@ set shell=zsh\ -i
 """"""""""""""""""""""""""""""""""""""
 " ----- FZF configs {{{1
 """"""""""""""""""""""""""""""""""""""
-" Mapping h because it sits on my pointing finger - denotive of primary
-nnoremap ,f :Files<CR>  
-nnoremap ,b :Buffers<CR>  
-nnoremap ,C :Commands<CR>  
-nnoremap ,m :Maps<CR>  
-nnoremap ,w :Windows<CR>  
+nnoremap ,f :Files<CR>
+nnoremap ,b :Buffers<CR>
+nnoremap ,C :Commands<CR>
+nnoremap ,m :Maps<CR>
+nnoremap ,w :Windows<CR>
 " Ripgrep
-nnoremap ,r :Rg<CR>  
+nnoremap ,r :Rg<CR>
 " Buffer history
 nnoremap ,h :History<CR>
 " Command history
@@ -162,8 +178,8 @@ nnoremap ,Hc :History:<CR>
 " Search History
 nnoremap ,Hs :History/<CR>
 
-let g:fzf_layout= {'down': '80%'}
-let g:fzf_preview_window = 'up:60%'
+"let g:fzf_layout= {'down': '80%'}
+"let g:fzf_preview_window = 'up:60%'
 
 """""""""""""""""""""""""""""""""""""
 " ----- Theme/Color settings {{{1
@@ -173,18 +189,25 @@ colorscheme gruvbox
 
 " vim-color brackets on globally
 let g:rainbow_active = 1
+let g:rainbow_conf = {
+\	'separately': {
+\		'nerdtree': 0,
+\	}
+\}
 
 " Allow powerline font
 let g:airline_powerline_fonts = 1 
-
+let g:airline#extensions#coc#enabled = 0
 """"""""""""""""""""""""""""""""""""""
 " ----- Vim easymotion config{{{1
 """"""""""""""""""""""""""""""""""""""
-nmap s <Plug>(easymotion-s2)
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+let g:EasyMotion_keys='idasonetuh'
+
+nmap s <Plug>(easymotion-overwin-f)
 nmap t <Plug>(easymotion-t2)
-"
-nmap <leader>m <Plug>(easymotion-prefix)
-"let g:EasyMotion_do_mapping = 0 " Disable default mappings
+nmap T <Plug>(easymotion-T2)
+nmap <leader>m <Plug>(easymotion-repeat)
 
 " Jump to anywhere you want with minimal keystrokes, with just one key binding.
 " `s{char}{label}`
@@ -213,8 +236,8 @@ set expandtab
 set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 
 " Linebreak on 500 characters
 set lbr
@@ -234,12 +257,18 @@ set indentkeys-=0#
 """"""""""""""""""""""""""""""""""""""
 " ----- Nerdtree configs {{{1
 """"""""""""""""""""""""""""""""""""""
-map <C-o> :NERDTreeToggle<CR>
-let g:NERDTreeFileExtensionHighlightFullName = 1
-let g:NERDTreeExactMatchHighlightFullName = 1
-let g:NERDTreePatternMatchHighlightFullName = 1
-let g:NERDTreeHighlightFolders = 1 " enables folder icon highlighting using exact match
-let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
+" Trying out netrw
+map <leader>n :Exp<CR>
+map <leader>v :Vex<CR>
+map <leader>s :Sex<CR>
+let g:netrw_liststyle=3
+autocmd FileType netrw setl bufhidden=wipe
+
+"let g:NERDTreeFileExtensionHighlightFullName = 1
+"let g:NERDTreeExactMatchHighlightFullName = 1
+"let g:NERDTreePatternMatchHighlightFullName = 1
+"let g:NERDTreeHighlightFolders = 1 " enables folder icon highlighting using exact match
+"let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
 
 """"""""""""""""""""""""""""""""""""""
 " ----- Debugger config {{{1
@@ -273,7 +302,13 @@ let g:vimtex_latexmk_continuous = 1
 let g:vimtex_view_method = 'zathura'
 
 """"""""""""""""""""""""""""""""""""""
-" ----- ALE customisations {{{1
+" ----- Nvim-r configs {{{1
+""""""""""""""""""""""""""""""""""""""
+" '__' to convert into '<-'
+let g:R_assign = 2
+
+""""""""""""""""""""""""""""""""""""""
+" ----- ALE configs {{{1
 """"""""""""""""""""""""""""""""""""""
 map <leader>at :ALEToggle<CR>
 map <leader>an :ALENext<CR>
@@ -407,8 +442,8 @@ omap af <Plug>(coc-funcobj-a)
 " Use <TAB> for selections ranges.
 " NOTE: Requires 'textDocument/selectionRange' support from the language server.
 " coc-tsserver, coc-python are the examples of servers that support it.
-nmap <silent> <TAB> <Plug>(coc-range-select)
-xmap <silent> <TAB> <Plug>(coc-range-select)
+nmap <silent> <S-TAB> <Plug>(coc-range-select)
+xmap <silent> <S-TAB> <Plug>(coc-range-select)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')

@@ -9,6 +9,9 @@ for PID in $CHROMIUM_PID_LIST; do
     exit 0
   fi
 done
-i3-msg "kill"
 
-
+if [[ $DESKTOP_SESSION = "xmonad" ]]; then
+  xdotool key Super+shift+c
+else
+  i3-msg "kill"
+fi

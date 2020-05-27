@@ -316,7 +316,7 @@ map <leader>an :ALENext<CR>
 let g:ale_linter_aliases = {'typescriptreact': 'typescript'}
 
 " Note to future self, there may be unnecessry double checking with clangtidy's static-analser and clang
-let g:ale_linters = {'cpp': ['clangtidy', 'cppcheck']}
+let g:ale_linters = {'cpp': ['clangtidy', 'cppcheck'], 'haskell': ['hlint', 'hdevtools', 'hfmt']}
 " Still don't know if i really need clangcheck
 "let g:ale_linters = {'cpp': ['clangtidy','clangcheck','cppcheck']}
 "let g:ale_cpp_clangcheck_executable = 'clang-check'
@@ -390,7 +390,9 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
+" decided to keep gi to its default mapping coc implemenation not available for most of my
+" LS
+"nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.

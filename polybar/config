@@ -349,12 +349,12 @@ label-charging = ⚡-%percentage%% %time%
 
 format-discharging = <label-discharging>
 format-discharging-underline = ${self.format-charging-underline}
-label-discharging = D - %percentage%% %time% 
+label-discharging = %percentage%% %time% 
 
 format-full-prefix = " "
 format-full-prefix-foreground = ${colors.foreground-alt}
 format-full-underline = ${self.format-charging-underline}
-label-full = FULL BAT
+label-full = ⚡FULL
 
 ramp-capacity-0 = 
 ramp-capacity-1 = 

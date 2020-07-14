@@ -85,6 +85,9 @@ Plug 'prettier/vim-prettier', {
 
 """ --- R ---  
 Plug 'jalvesaq/Nvim-R'
+
+""" --- CMake ---
+Plug 'pboettch/vim-cmake-syntax'
 call plug#end()
 
 
@@ -101,6 +104,9 @@ set hlsearch
 " Map leader '\' to space
 nmap <Space> <Leader>
 vmap <Space> <Leader>
+
+" Map Ctrl-Backspace to delete the previous word in insert mode.
+inoremap <C-BS> <C-W>
 
 " open new terminal window in directory
 command T silent execute '!urxvt &'
@@ -192,6 +198,7 @@ let g:rainbow_active = 1
 let g:rainbow_conf = {
 \	'separately': {
 \		'nerdtree': 0,
+\   'cmake':0,
 \	}
 \}
 
@@ -204,7 +211,7 @@ let g:airline#extensions#coc#enabled = 0
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:EasyMotion_keys='idasonetuh'
 
-nmap s <Plug>(easymotion-overwin-f)
+nmap s <Plug>(easymotion-overwin-f2)
 nmap t <Plug>(easymotion-t2)
 nmap T <Plug>(easymotion-T2)
 nmap <leader>m <Plug>(easymotion-repeat)

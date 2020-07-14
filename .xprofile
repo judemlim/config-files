@@ -9,13 +9,16 @@ fi
 # Swap to HDMI1 output if it is detected
 xrandr | grep -q "HDMI1 connected" && xrandr --output HDMI1 --auto --primary --output eDP1 --off
 
-# Allow ranger to default to nvim when run outside i3
+# Allow ranger to default to nvim when run outside DESKTOP SESSION
 export VISUAL='nvim'
 export EDITOR='nvim'
 
+# Allow desktop session to find local variables
+export PATH=~/.local/bin:$PATH
+
 # start program that binds keys to shortcuts
 xbindkeys
-xset r rate 200 25
+xset r rate 250 25
 
 # Disable auto mute that prevents me from switching audio back and forth laptop
 /usr/bin/amixer -c 0 sset "Auto-Mute Mode" Disabled

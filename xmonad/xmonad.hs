@@ -36,7 +36,6 @@ import XMonad.Hooks.Place (placeHook, withGaps, smart)
 import XMonad.Actions.CopyWindow -- for dwm window style tagging
 import XMonad.Actions.GridSelect
 import XMonad.Actions.CycleWS
-
 -- layout 
 import XMonad.Layout.Renamed (renamed, Rename(Replace))
 import XMonad.Layout.LayoutHints
@@ -56,7 +55,8 @@ myModMask       = mod4Mask  -- Sets modkey to super/windows key
 myTerminal      = "urxvt"   -- Sets default terminal
 myBorderWidth   = 4         -- Sets border width for windows
 myNormalBorderColor = "#839496"
-myFocusedBorderColor = "#bbc5ff"
+--myFocusedBorderColor = "#bbc5ff"
+myFocusedBorderColor = "#b1eea8"
 myppCurrent = "#268BD2"
 myppVisible = "#268BD2"
 myppHidden = "#B58900"
@@ -74,8 +74,9 @@ myStartupHook = do
       spawnOnce "unclutter --timeout 2 &"
       spawnOnce "picom &"  
       spawnOnce "albert &"  
-      spawnOnce "thunderbird"  
+      spawnOnce "sleep 10 && thunderbird "  
       spawn "~/Scripts/refresh_wallpaper.sh"  
+      spawn "xset r rate 200 25"  
 
 ------------------------------------------------------------------------
 -- Event hook
@@ -87,22 +88,23 @@ myEventHook = hintsEventHook
 -- layout
 ------------------------------------------------------------------------
 -- using toggleStruts with monocle
-myLayout = avoidStruts (columns ||| tiled ||| full ||| grid ||| bsp)
+myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| bsp
   where
      -- default tiling algorithm partitions the screen into two panes
+     -- TODO find out what layout with Hints placement does
      tiled = renamed [Replace "tall"] $ layoutHintsWithPlacement (1.0, 0.0) (spacingRaw False (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $ ResizableTall 1 (3/100) (1/2) [])
 
      -- columns
      columns = renamed [Replace "columns"] $ spacingRaw False (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $ ThreeColMid 1 (3/100) (1/2)
 
      -- grid
-     grid = renamed [Replace "grid"] $ spacingRaw True (Border 10 0 10 0) True (Border 0 10 0 10) True $ Grid (16/10)
+     grid = renamed [Replace "grid"] $ spacingRaw True (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $  Grid (16/10)
 
      -- full
      full = renamed [Replace "full"] $ smartBorders (Full)
 
      -- bsp
-     bsp = renamed [Replace "bsp"] $ emptyBSP
+     bsp = renamed [Replace "bsp"] $ reflectHoriz $ emptyBSP
 
      -- The default number of windows in the master pane
      nmaster = 1
@@ -132,8 +134,10 @@ myLayout = avoidStruts (columns ||| tiled ||| full ||| grid ||| bsp)
 myManageHook = composeAll
     [ className =? "mpv"            --> doRectFloat (W.RationalRect (1 % 4) (1 % 4) (1 % 2) (1 % 2))
     , className =? "Gimp"           --> doFloat
+    , className  =? "Thunderbird" --> doShift "9"
     , className =? "Firefox" <&&> resource =? "Toolkit" --> doFloat -- firefox pip
-    , resource  =? "desktop_window" --> doIgnore
+    , className  =? "albert" --> hasBorder False
+    , resource  =? "desktoxp_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore 
     ] <+> namedScratchpadManageHook scratchpads
     
@@ -161,13 +165,19 @@ myKeys =
      , ("M-g", sendMessage $ JumpToLayout "grid")
      , ("M-b", sendMessage $ JumpToLayout "bsp")
      , ("M-c", sendMessage $ JumpToLayout "columns")
+     , ("M-r", withFocused $ windows . W.sink)
      , ("M-w", goToSelected defaultGSConfig) -- show all windows
      , ("M-C-<Return>", namedScratchpadAction scratchpads "terminal")
      , ("M-C-r", namedScratchpadAction scratchpads "ranger")
      , ("M-C-m", namedScratchpadAction scratchpads "spotify")
      , ("M-C-z", namedScratchpadAction scratchpads "todoList")
+     , ("M-C-n", namedScratchpadAction scratchpads "nixnote")
      , ("M-e", spawn "albert toggle")
+     , ("Print", spawn "spectacle")
      , ("M-p", spawn "rofi -show combi -modi combi") -- rofi
+     , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
+     , ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%")
+     , ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%")
     ]
 
 ------------------------------------------------------------------------
@@ -178,10 +188,10 @@ scratchpads :: [NamedScratchpad]
 scratchpads = [ 
     NS "terminal" spawnTerm findTerm manageTerm,
     NS "ranger" "urxvt -name fileExplorer -e ranger" (resource =? "fileExplorer") manageTerm,
-    -- TODO fix spotify's float problem
     NS "spotify" "spotify" (className =? "Spotify") manageTerm,
-    NS "todoList" "superproductivity" (className  =? "superProductivity") 
-          (customFloating $ W.RationalRect (1/3) (1/6) (1/3) (2/3))
+    NS "todoList" "superproductivity" (className  =? "superProductivity")
+          (customFloating $ W.RationalRect (1/3) (1/6) (1/3) (2/3)), 
+    NS "nixnote" "NixNote2-x86_64.AppImage -style=GTK+" (className =? "nixnote2") nonFloating
     ]
     where
     spawnTerm  = myTerminal ++  " -name scratchpad"

@@ -1,6 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH=~/.local/bin:$PATH
+# I already added this before the desktop session initialises in xprofile
+#export PATH=~/.local/bin:$PATH
 
 # For nvim shell to become interactive (I think this is what it's called)
 export ZDOTDIR=$HOME
@@ -128,3 +129,8 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 
 #Zsh autosuggestions
 bindkey '^ ' autosuggest-accept
+
+# Python-virtualenvwrapper usage
+#export WORKON_HOME=~/.virtualenvs
+#source /usr/bin/virtualenvwrapper.sh
+#workon uni_env

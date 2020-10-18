@@ -22,7 +22,7 @@ Plug 'tpope/vim-surround'
 " Multi line commentor
 Plug 'scrooloose/nerdcommenter'
 
-" Debugger
+" Debugger - python, c/c++
 Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh \| UpdateRemotePlugins' }
 
 " Floating terminal implementation
@@ -84,10 +84,17 @@ Plug 'prettier/vim-prettier', {
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
 
 """ --- R ---  
+" R markdown
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-rmarkdown'
+Plug 'vim-pandoc/vim-pandoc-syntax'
+
+" R markdown
 Plug 'jalvesaq/Nvim-R'
 
 """ --- CMake ---
 Plug 'pboettch/vim-cmake-syntax'
+
 call plug#end()
 
 
@@ -104,6 +111,9 @@ set hlsearch
 " Map leader '\' to space
 nmap <Space> <Leader>
 vmap <Space> <Leader>
+
+" Turn of highlighting
+nnoremap  <C-N> :noh<CR>
 
 " Map Ctrl-Backspace to delete the previous word in insert mode.
 inoremap <C-BS> <C-W>
@@ -167,7 +177,11 @@ let g:python3_host_prog = "/bin/python"
 " make zsh invocation in vim interactive
 set shell=zsh\ -i
 
-""""""""""""""""""""""""""""""""""""""
+" auto resize windows
+"autocmd VimResized * wincmd =
+nmap <Leader>= <C-W>= 
+
+"""""""""""""""""""""""""""""""""""""""
 " ----- FZF configs {{{1
 """"""""""""""""""""""""""""""""""""""
 nnoremap ,f :Files<CR>
@@ -211,7 +225,7 @@ let g:airline#extensions#coc#enabled = 0
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:EasyMotion_keys='idasonetuh'
 
-nmap s <Plug>(easymotion-overwin-f2)
+nmap s <Plug>(easymotion-overwin-f)
 nmap t <Plug>(easymotion-t2)
 nmap T <Plug>(easymotion-T2)
 nmap <leader>m <Plug>(easymotion-repeat)
@@ -226,6 +240,13 @@ nmap <leader>m <Plug>(easymotion-repeat)
 
 " Turn on case-insensitive feature
 let g:EasyMotion_smartcase = 1
+
+" Different colours for if 1 or 2 keys are needed to be pressed
+hi EasyMotionTarget ctermbg=none ctermfg=red 
+hi EasyMotionTarget2 ctermbg=none ctermfg=yellow
+
+"hi EasyMotionTarget2First ctermbg=none ctermfg=red
+"hi EasyMotionTarget2Second ctermbg=none ctermfg=yellow
 
 " Line motions
 map <Leader>j <Plug>(easymotion-j)
@@ -262,12 +283,13 @@ set indentkeys-=0#
 
 
 """"""""""""""""""""""""""""""""""""""
-" ----- Nerdtree configs {{{1
+" ----- Netrw configs {{{1
 """"""""""""""""""""""""""""""""""""""
 " Trying out netrw
 map <leader>n :Exp<CR>
 map <leader>v :Vex<CR>
 map <leader>s :Sex<CR>
+map <leader>l :Lex 15<CR>
 let g:netrw_liststyle=3
 autocmd FileType netrw setl bufhidden=wipe
 
@@ -319,6 +341,7 @@ let g:R_assign = 2
 """"""""""""""""""""""""""""""""""""""
 map <leader>at :ALEToggle<CR>
 map <leader>an :ALENext<CR>
+map <leader>ap :ALEPrevious<CR>
 "read .tsx files as .ts
 let g:ale_linter_aliases = {'typescriptreact': 'typescript'}
 

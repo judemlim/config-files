@@ -367,6 +367,26 @@ let g:ale_cpp_cppcheck_options = '--enable=style'
 " coc-emmet, coc-vimtex, coc-tsserver, coc-python, coc-json
 " coc-java-debug, coc-java, coc-css, coc-clangd, coc-r-lsp
 
+let g:coc_global_extensions = [
+      \'coc-json',
+      \'coc-git',
+      \'coc-snippets',
+      \'coc-prettier',
+      \'coc-marketplace',
+      \'coc-lists',
+      \'coc-eslint',
+      \'coc-emmet'
+      \'coc-vimtex',
+      \'coc-tsserver'
+      \'coc-python',
+      \'coc-java-debug',
+      \'coc-java',
+      \'coc-css',
+      \'coc-cmake',
+      \'coc-clangd',
+      \'coc-r-lsp',
+      \]
+
 " TextEdit might fail if hidden is not set.
 set hidden
 

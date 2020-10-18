@@ -78,7 +78,6 @@ plugins=(
     colored-man-pages
     colorize
     jump
-    zsh-autosuggestions
 )
 
 
@@ -117,7 +116,7 @@ fi
 source $ZSH/oh-my-zsh.sh
 # load aliases
 source ~/.zsh_aliases
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
 
 # for bazel autocompletion
 fpath+=(~/.zsh/completion)
@@ -130,7 +129,23 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 #Zsh autosuggestions
 bindkey '^ ' autosuggest-accept
 
+export CUDA_HOME=/opt/cuda/
 # Python-virtualenvwrapper usage
 #export WORKON_HOME=~/.virtualenvs
 #source /usr/bin/virtualenvwrapper.sh
 #workon uni_env
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/jude/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/jude/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/jude/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/jude/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<

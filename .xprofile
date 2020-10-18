@@ -1,13 +1,15 @@
 #!/bin/sh
 
 # enable qt5ct to run 
-if [ "$XDG_CURRENT_DESKTOP" = "i3" ]; then
-    export QT_QPA_PLATFORMTHEME="qt5ct"
-    export QT_PLUGIN_PATH=$HOME/.kde4/lib/kde4/plugins/:/usr/lib/kde4/plugins/
-fi
+export QT_QPA_PLATFORMTHEME="qt5ct"
+export QT_PLUGIN_PATH=$HOME/.kde4/lib/kde4/plugins/:/usr/lib/kde4/plugins/
 
 # Swap to HDMI1 output if it is detected
 xrandr | grep -q "HDMI1 connected" && xrandr --output HDMI1 --auto --primary --output eDP1 --off
+
+# Prevent screen sleep
+#xset -dpms
+#xset s off
 
 # Allow ranger to default to nvim when run outside DESKTOP SESSION
 export VISUAL='nvim'

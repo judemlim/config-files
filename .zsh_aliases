@@ -36,6 +36,7 @@ alias 'music'='ranger ~/Music'
 alias 'red'='redshift &!'
 alias 'redx'='redshift -x'
 alias 'pac'='sudo pacman'
+alias 'meditate'='xset -dpms;xset s off'
 # remove binaries in current directories
 alias 'rm_binaries'='find . ! -name "*.*"  -delete'
 

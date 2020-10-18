@@ -46,6 +46,8 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.Reflect
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.Circle
+import XMonad.Layout.CenteredMaster
 
 ------------------------------------------------------------------------
 -- config
@@ -74,6 +76,8 @@ myStartupHook = do
       spawnOnce "unclutter --timeout 2 &"
       spawnOnce "picom &"  
       spawnOnce "albert &"  
+      --spawnOnce "sudo logid"  
+      --spawnOnce "psensor &"  
       spawnOnce "sleep 10 && thunderbird "  
       spawn "~/Scripts/refresh_wallpaper.sh"  
       spawn "xset r rate 200 25"  
@@ -88,7 +92,7 @@ myEventHook = hintsEventHook
 -- layout
 ------------------------------------------------------------------------
 -- using toggleStruts with monocle
-myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| bsp
+myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| centeredGrid ||| bsp ||| circle 
   where
      -- default tiling algorithm partitions the screen into two panes
      -- TODO find out what layout with Hints placement does
@@ -100,12 +104,18 @@ myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| 
      -- grid
      grid = renamed [Replace "grid"] $ spacingRaw True (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $  Grid (16/10)
 
+     -- centered grid
+     centeredGrid = renamed [Replace "centeredGrid"] $ spacingRaw True (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $  centerMaster $ Grid (16/10)
+
      -- full
      full = renamed [Replace "full"] $ smartBorders (Full)
 
      -- bsp
      bsp = renamed [Replace "bsp"] $ reflectHoriz $ emptyBSP
 
+     -- circle
+     circle = renamed [Replace "circle"] $ reflectHoriz $ Circle
+      
      -- The default number of windows in the master pane
      nmaster = 1
      
@@ -135,6 +145,7 @@ myManageHook = composeAll
     [ className =? "mpv"            --> doRectFloat (W.RationalRect (1 % 4) (1 % 4) (1 % 2) (1 % 2))
     , className =? "Gimp"           --> doFloat
     , className  =? "Thunderbird" --> doShift "9"
+    , className  =? "Psensor" --> doShift "6"
     , className =? "Firefox" <&&> resource =? "Toolkit" --> doFloat -- firefox pip
     , className  =? "albert" --> hasBorder False
     , resource  =? "desktoxp_window" --> doIgnore
@@ -150,11 +161,11 @@ myKeys =
         | (i, k) <- zip (myWorkspaces) (map show [1 :: Int ..])
         , (f, m) <- [(W.view, ""), (W.shift, "S-"), (copy, "S-C-")]]
     ++
-    [("S-C-a", windows copyToAll)   -- copy window to all workspaces
-     , ("S-M-t", withFocused $ windows . W.sink) -- flatten flaoting window to tiled
-     , ("S-C-z", killAllOtherCopies)  -- kill copies of window on other workspaces
+    [("M-a", windows copyToAll)   -- copy window to all workspaces
+     , ("M-z", killAllOtherCopies)  -- kill copies of window on other workspaces
      , ("M-<Right>", moveTo Next NonEmptyWS)
      , ("M-<Left>", moveTo Prev NonEmptyWS)
+     , ("M-S-r", spawn rangerTerminal)
      , ("M-S-a", sendMessage MirrorExpand)
      , ("M-S-z", sendMessage MirrorShrink)
      , ("M-h", sendMessage Expand)
@@ -163,15 +174,22 @@ myKeys =
      , ("M-f", sendMessage $ JumpToLayout "full")
      , ("M-t", sendMessage $ JumpToLayout "tall")
      , ("M-g", sendMessage $ JumpToLayout "grid")
+     , ("M-S-g", sendMessage $ JumpToLayout "centeredGrid")
      , ("M-b", sendMessage $ JumpToLayout "bsp")
      , ("M-c", sendMessage $ JumpToLayout "columns")
+     , ("M-o", sendMessage $ JumpToLayout "circle")
      , ("M-r", withFocused $ windows . W.sink)
+     , ("M-n", refresh)
      , ("M-w", goToSelected defaultGSConfig) -- show all windows
+     , ("M-<Backspace>", windows W.swapMaster)
+     , ("M-S-<Backspace>", spawn myTerminal)
      , ("M-C-<Return>", namedScratchpadAction scratchpads "terminal")
+     , ("M-C-<Backspace>", namedScratchpadAction scratchpads "terminal")
      , ("M-C-r", namedScratchpadAction scratchpads "ranger")
      , ("M-C-m", namedScratchpadAction scratchpads "spotify")
      , ("M-C-z", namedScratchpadAction scratchpads "todoList")
      , ("M-C-n", namedScratchpadAction scratchpads "nixnote")
+     , ("M-C-p", namedScratchpadAction scratchpads "pulseaudio")
      , ("M-e", spawn "albert toggle")
      , ("Print", spawn "spectacle")
      , ("M-p", spawn "rofi -show combi -modi combi") -- rofi
@@ -179,6 +197,8 @@ myKeys =
      , ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%")
      , ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%")
     ]
+    where
+    rangerTerminal = myTerminal ++ " -e ranger"
 
 ------------------------------------------------------------------------
 -- scratchpads
@@ -191,7 +211,9 @@ scratchpads = [
     NS "spotify" "spotify" (className =? "Spotify") manageTerm,
     NS "todoList" "superproductivity" (className  =? "superProductivity")
           (customFloating $ W.RationalRect (1/3) (1/6) (1/3) (2/3)), 
-    NS "nixnote" "NixNote2-x86_64.AppImage -style=GTK+" (className =? "nixnote2") nonFloating
+    NS "nixnote" "nixnote2" (className =? "nixnote2") nonFloating,
+    NS "pulseaudio" "pavucontrol" (className  =? "Pavucontrol")
+          (manageTerm) 
     ]
     where
     spawnTerm  = myTerminal ++  " -name scratchpad"
@@ -203,7 +225,7 @@ scratchpads = [
 ------------------------------------------------------------------------
 
 main = do
-    xmproc <- spawnPipe "/usr/bin/xmobar -x 0 /home/judemlim/.config/xmobar/xmobarrc"
+    xmproc <- spawnPipe "/usr/bin/xmobar -x 0 /home/jude/.config/xmobar/xmobarrc"
     xmonad $ ewmh desktopConfig
         { manageHook = manageDocks <+> myManageHook <+> manageHook desktopConfig
         , startupHook        = myStartupHook

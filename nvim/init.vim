@@ -375,9 +375,9 @@ let g:coc_global_extensions = [
       \'coc-marketplace',
       \'coc-lists',
       \'coc-eslint',
-      \'coc-emmet'
+      \'coc-emmet',
       \'coc-vimtex',
-      \'coc-tsserver'
+      \'coc-tsserver',
       \'coc-python',
       \'coc-java-debug',
       \'coc-java',

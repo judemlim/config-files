@@ -1,5 +1,5 @@
 URxvt.geometry: 135x40
-URxvt.font: xft:Hack Nerd Font Mono:size=16
+URxvt.font: xft:Hack:size=16
 URxvt.scrollBar: false
 URxvt.iso14755_52: false
 URxvt.iso14755: false
@@ -20,11 +20,11 @@ URxvt.tabbed.reopen-on-close: yes
 ! Extensions
 ! Check if I should install clipboard
 ! NOTE resize-font conflicts with tabbed/tabbedex; the window doesnt redraw itself
-URxvt.perl-ext-common: default,resize-font
+URxvt.perl-ext-common: default,font-size
+URxvt.keysym.C-Up: font-size:increase
+URxvt.keysym.C-Down: font-size:decrease
 !URxvt.keysym.F11: perl:fullscreen:switch
 !URxvt.keysym.Shift-Control-V: perl:clipboard:paste
-URxvt.keysym.C-Down:  resize-font:smaller
-URxvt.keysym.C-Up:    resize-font:bigger
 
 ! Fake Transperancy
 !URxvt.transparent: true

@@ -54,7 +54,7 @@ import XMonad.Layout.CenteredMaster
 ------------------------------------------------------------------------
 
 myModMask       = mod4Mask  -- Sets modkey to super/windows key
-myTerminal      = "urxvt"   -- Sets default terminal
+myTerminal      = "kitty"   -- Sets default terminal
 myBorderWidth   = 4         -- Sets border width for windows
 myNormalBorderColor = "#839496"
 --myFocusedBorderColor = "#bbc5ff"
@@ -75,7 +75,6 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 myStartupHook = do
       spawnOnce "unclutter --timeout 2 &"
       spawnOnce "picom &"  
-      spawnOnce "albert &"  
       --spawnOnce "sudo logid"  
       --spawnOnce "psensor &"  
       spawnOnce "sleep 10 && thunderbird "  
@@ -147,7 +146,7 @@ myManageHook = composeAll
     , className  =? "Thunderbird" --> doShift "9"
     , className  =? "Psensor" --> doShift "6"
     , className =? "Firefox" <&&> resource =? "Toolkit" --> doFloat -- firefox pip
-    , className  =? "albert" --> hasBorder False
+    , className  =? "Synapse" --> hasBorder False
     , resource  =? "desktoxp_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore 
     ] <+> namedScratchpadManageHook scratchpads
@@ -190,7 +189,7 @@ myKeys =
      , ("M-C-z", namedScratchpadAction scratchpads "todoList")
      , ("M-C-n", namedScratchpadAction scratchpads "nixnote")
      , ("M-C-p", namedScratchpadAction scratchpads "pulseaudio")
-     , ("M-e", spawn "albert toggle")
+     , ("M-e", spawn "synapse toggle")
      , ("Print", spawn "spectacle")
      , ("M-p", spawn "rofi -show combi -modi combi") -- rofi
      , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
@@ -207,7 +206,7 @@ myKeys =
 scratchpads :: [NamedScratchpad]
 scratchpads = [ 
     NS "terminal" spawnTerm findTerm manageTerm,
-    NS "ranger" "urxvt -name fileExplorer -e ranger" (resource =? "fileExplorer") manageTerm,
+    NS "ranger" "kitty --name fileExplorer -e ranger" (resource =? "fileExplorer") manageTerm,
     NS "spotify" "spotify" (className =? "Spotify") manageTerm,
     NS "todoList" "superproductivity" (className  =? "superProductivity")
           (customFloating $ W.RationalRect (1/3) (1/6) (1/3) (2/3)), 
@@ -216,7 +215,7 @@ scratchpads = [
           (manageTerm) 
     ]
     where
-    spawnTerm  = myTerminal ++  " -name scratchpad"
+    spawnTerm  = myTerminal ++  " --name scratchpad"
     findTerm   = resource =? "scratchpad"
     manageTerm = customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3)
     
@@ -225,7 +224,7 @@ scratchpads = [
 ------------------------------------------------------------------------
 
 main = do
-    xmproc <- spawnPipe "/usr/bin/xmobar -x 0 /home/jude/.config/xmobar/xmobarrc"
+    xmproc <- spawnPipe "/usr/bin/xmobar -x 0 /home/judemichaellim/.config/xmobar/xmobarrc"
     xmonad $ ewmh desktopConfig
         { manageHook = manageDocks <+> myManageHook <+> manageHook desktopConfig
         , startupHook        = myStartupHook

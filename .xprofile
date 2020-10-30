@@ -19,8 +19,10 @@ export EDITOR='nvim'
 export PATH=~/.local/bin:$PATH
 
 # start program that binds keys to shortcuts
-xbindkeys
+#xbindkeys
 xset r rate 250 25
+setxkbmap -option "ctrl:swapcaps"
+setxkbmap -option "altwin:swap_alt_win"
 
 # Disable auto mute that prevents me from switching audio back and forth laptop
 /usr/bin/amixer -c 0 sset "Auto-Mute Mode" Disabled

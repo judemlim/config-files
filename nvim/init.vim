@@ -217,7 +217,7 @@ let g:rainbow_conf = {
 \}
 
 " Allow powerline font
-let g:airline_powerline_fonts = 1 
+let g:airline_powerline_fonts = 1
 let g:airline#extensions#coc#enabled = 0
 """"""""""""""""""""""""""""""""""""""
 " ----- Vim easymotion config{{{1

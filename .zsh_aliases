@@ -22,7 +22,7 @@ alias 'sysr'='systemctl reboot'
 alias 'nvym'='vym ~/Templates/VymTemplate.vym &!'
 alias 'vpn'='expressvpn connect'
 alias 'vpnx'='expressvpn disconnect'
-alias 't'='urxvt &!'
+alias 't'='kitty &!'
 alias 'udd'='urxvt -name dropdown &!'
 alias 'ufe'='urxvt -name file_explorer -e ranger &!'
 alias 'v'='nvim'
@@ -59,12 +59,12 @@ alias 'wtr'='curl wttr.in/pemulwuy'
 # Dual screen set up
 alias 'aus'='pacmd set-card-profile 0 "output:hdmi-surround-extra1"'
 alias 'aul'='pacmd set-card-profile 0 "output:analog-stereo"'
-alias 'm1'='xrandr --output eDP1 --auto --primary --output HDMI1 --off && i3-msg restart'
-alias 'm2'='xrandr --output HDMI1 --auto --primary --output eDP1 --off && i3-msg restart'
+alias 'm1'='xrandr --output eDP1 --auto --primary --output HDMI1 --off'
+alias 'm2'='xrandr --output HDMI1 --auto --primary --output eDP1 --off'
 alias 'm3'='xrandr --output eDP1 --auto --primary --output HDMI1 --right-of eDP1 '
 # Quick switch between desktop setup (with external keyboard) and laptop setup
-alias 'laptop'='xrandr --output eDP1 --auto --primary --output HDMI1 --off; pulseaudio -k; setxkbmap dvorak; setxkbmap -option "ctrl:nocaps"; i3-msg restart'
-alias 'desktop'='xrandr | grep -q "HDMI1 connected" && xrandr --output HDMI1 --auto --primary --output eDP1 --off && pacmd set-card-profile 0 "output:analog-stereo" && setxkbmap -option && setxkbmap us && i3-msg restart'
+alias 'laptop'='xrandr --output eDP1 --auto --primary --output HDMI1 --off; pulseaudio -k; setxkbmap dvorak; setxkbmap -option "ctrl:nocaps"'
+alias 'desktop'='xrandr | grep -q "HDMI1 connected" && xrandr --output HDMI1 --auto --primary --output eDP1 --off && pacmd set-card-profile 0 "output:analog-stereo" && setxkbmap -option && setxkbmap us '
 alias 'family'='xrandr | grep -q "HDMI1 connected" && xrandr --output HDMI1 --auto --primary --output eDP1 --off && pacmd set-card-profile 0 "output:hdmi-surround-extra1"'
 # uni specific
 alias 'unissh'='ssh z3463557@cse.unsw.edu.au'
@@ -76,3 +76,6 @@ alias 'nix'='NixNote2-x86_64.AppImage -style=GTK+ >> /dev/null 2>&1 &!'
 
 # Projects
 alias 'website'='cd ~/website'
+
+# Mount SMB
+alias 'smb_anime'='smbclient -L //192.168.0.203 && sudo mount -t cifs -o username=jude //192.168.0.203/Anime Tower'

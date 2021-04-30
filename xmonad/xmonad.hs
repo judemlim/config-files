@@ -46,6 +46,7 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.Reflect
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.MultiColumns
 import XMonad.Layout.Circle
 import XMonad.Layout.CenteredMaster
 
@@ -92,14 +93,17 @@ myEventHook = hintsEventHook
 -- layout
 ------------------------------------------------------------------------
 -- using toggleStruts with monocle
-myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| centeredGrid ||| bsp ||| circle 
+myLayout = smartBorders $ avoidStruts $ customColumns |||  uniformColumns ||| tiled ||| full ||| grid ||| centeredGrid ||| bsp ||| circle 
   where
      -- default tiling algorithm partitions the screen into two panes
      -- TODO find out what layout with Hints placement does
      tiled = renamed [Replace "tall"] $ layoutHintsWithPlacement (1.0, 0.0) (spacingRaw False (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $ ResizableTall 1 (3/100) (1/2) [])
 
      -- columns
-     columns = renamed [Replace "columns"] $ spacingRaw False (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $ ThreeColMid 1 (3/100) (1/2)
+     customColumns = renamed [Replace "customCols"] $ spacingRaw False (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $ ThreeColMid 1 (3/100) (1/2)
+
+     -- multiCol
+     uniformColumns = renamed [Replace "uniformCols"] $ spacingRaw False (Border 10 0 10 0) True (Border 0 10 0 10) True $ multiCol [1] 1 0.01 (-0.5)
 
      -- grid
      grid = renamed [Replace "grid"] $ spacingRaw True (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $  Grid (16/10)
@@ -176,7 +180,8 @@ myKeys =
      , ("M-g", sendMessage $ JumpToLayout "grid")
      , ("M-S-g", sendMessage $ JumpToLayout "centeredGrid")
      , ("M-b", sendMessage $ JumpToLayout "bsp")
-     , ("M-c", sendMessage $ JumpToLayout "columns")
+     , ("M-u", sendMessage $ JumpToLayout "uniformCols")
+     , ("M-c", sendMessage $ JumpToLayout "customCols")
      , ("M-o", sendMessage $ JumpToLayout "circle")
      , ("M-r", withFocused $ windows . W.sink)
      , ("M-n", refresh)
@@ -185,6 +190,7 @@ myKeys =
      , ("M-S-<Backspace>", spawn myTerminal)
      , ("M-C-<Return>", namedScratchpadAction scratchpads "terminal")
      , ("M-C-<Backspace>", namedScratchpadAction scratchpads "terminal")
+     , ("M-C-b", namedScratchpadAction scratchpads "blueman")
      , ("M-C-r", namedScratchpadAction scratchpads "ranger")
      , ("M-C-m", namedScratchpadAction scratchpads "spotify")
      , ("M-C-z", namedScratchpadAction scratchpads "todoList")
@@ -192,7 +198,7 @@ myKeys =
      , ("M-C-p", namedScratchpadAction scratchpads "pulseaudio")
      , ("M-e", spawn "albert toggle")
      , ("Print", spawn "spectacle")
-     , ("M-p", spawn "rofi -show combi -modi combi") -- rofi
+     , ("M-p", spawn "rofi -show drun") -- rofi
      , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
      , ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%")
      , ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%")
@@ -212,6 +218,7 @@ scratchpads = [
     NS "todoList" "superproductivity" (className  =? "superProductivity")
           (customFloating $ W.RationalRect (1/3) (1/6) (1/3) (2/3)), 
     NS "nixnote" "nixnote2" (className =? "nixnote2") nonFloating,
+    NS "blueman" "blueman-manager" (className  =? "Blueman-manager") manageTerm,
     NS "pulseaudio" "pavucontrol" (className  =? "Pavucontrol")
           (manageTerm) 
     ]

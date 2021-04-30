@@ -116,7 +116,11 @@ fi
 source $ZSH/oh-my-zsh.sh
 # load aliases
 source ~/.zsh_aliases
+
+# Arch specific sourcing
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/nvm/init-nvm.sh
 
 # for bazel autocompletion
 fpath+=(~/.zsh/completion)
@@ -149,3 +153,5 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+#
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

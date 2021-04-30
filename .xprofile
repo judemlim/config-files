@@ -24,3 +24,5 @@ xset r rate 250 25
 
 # Disable auto mute that prevents me from switching audio back and forth laptop
 /usr/bin/amixer -c 0 sset "Auto-Mute Mode" Disabled
+
+xmonad --recomplie

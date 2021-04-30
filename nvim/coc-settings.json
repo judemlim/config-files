@@ -2,4 +2,5 @@
     "emmet.includeLanguages": {
         "javascript":"javascriptreact"
     },
+    "diagnostic.displayByAle": true
 }

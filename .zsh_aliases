@@ -40,6 +40,12 @@ alias 'meditate'='xset -dpms;xset s off'
 # remove binaries in current directories
 alias 'rm_binaries'='find . ! -name "*.*"  -delete'
 
+# Work related
+# bitwarden for work
+alias 'b'='~/AppImages/Bitwarden* &!'
+alias 'devenv-awayco'='kitty --session ~/.config/kitty/awayco_setup.conf &!'
+alias 'vim-awayco'='cd ~/awayco-monorepo && v -S Session.vim'
+
 # Quick change configs
 alias 'vim_config'='nvim ~/.config/nvim/'
 alias 'vim_init'='nvim ~/.config/nvim/init.vim'

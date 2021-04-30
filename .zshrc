@@ -79,7 +79,7 @@ plugins=(
     colorize
     jump
     zsh-autosuggestions
-    zsh-syntax-highlighting
+    #zsh-syntax-highlighting
 )
 
 
@@ -136,21 +136,26 @@ export CUDA_HOME=/opt/cuda/
 #source /usr/bin/virtualenvwrapper.sh
 #workon uni_env
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/jude/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/jude/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/jude/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/jude/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+autoload -U add-zsh-hook
+load-nvmrc() {
+  if [[ -f .nvmrc && -r .nvmrc ]]; then
+    nvm use
+  elif [[ $(nvm version) != $(nvm version default)  ]]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+
+setopt HIST_IGNORE_SPACE
+
+# To use gnome-keyring outside of gnome
+if [ -n "$DESKTOP_SESSION" ];then
+    eval $(gnome-keyring-daemon --start)
+    export SSH_AUTH_SOCK
+fi
+

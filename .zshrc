@@ -159,3 +159,5 @@ if [ -n "$DESKTOP_SESSION" ];then
     export SSH_AUTH_SOCK
 fi
 
+# To prevent npm warning
+export FONTAWESOME_TOKEN=1234567890

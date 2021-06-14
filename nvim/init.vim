@@ -12,6 +12,12 @@ Plug 'honza/vim-snippets'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
+Plug 'airblade/vim-gitgutter'
+
+" Github codereviews
+Plug 'junkblocker/patchreview-vim'
+Plug 'codegram/vim-codereview'
 
 "Pair up enclosing characters
 Plug 'jiangmiao/auto-pairs'
@@ -37,12 +43,21 @@ Plug 'dense-analysis/ale'
 " Vim sugar for unix shell command
 Plug 'tpope/vim-eunuch'
 
+" Extra useful shortcuts
+Plug 'tpope/vim-unimpaired'
+
+" Ability to apply repeat '.' to some commands
+Plug 'tpope/vim-repeat'
+
 """ --- File navigation ---
 "Plug 'scrooloose/nerdTree'
 Plug 'tpope/vim-vinegar'
 " very useful fuzzy finder
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+" Ranger
+Plug 'francoiscabrol/ranger.vim'
+Plug 'rbgrouleff/bclose.vim'
 
 """ --- Aesthetics --- 
 " Aesthetic bar for mode tracking
@@ -95,10 +110,16 @@ Plug 'pboettch/vim-cmake-syntax'
 """ --- All syntax hightlighting ---
 Plug 'sheerun/vim-polyglot'
 
+""" --- Note taking ---
 Plug 'vimwiki/vimwiki'
 
+""" --- Vim 'zen mode' ---
 Plug 'junegunn/goyo.vim'
+
+""" --- Intutive book marks ---
 Plug 'MattesGroeger/vim-bookmarks'
+
+"Plug 'editorconfig/editorconfig-vim'
 
 call plug#end()
 
@@ -113,6 +134,8 @@ set titlestring=Neovim
 syntax on
 set number
 set hlsearch
+" keeps undo history when changing buffers I think
+set hidden
 
 " Disable cursor blinking
 set guicursor+=a:blinkon0
@@ -123,25 +146,32 @@ let mapleader = "\<Space>"
 "vmap <Space> <Leader>
 
 " Turn of highlighting
-nnoremap  <C-N> :noh<CR>
+"map <esc> :noh<cr>
+"nnoremap <CR> :noh<CR><CR>
+"nnoremap <BS> :noh<cr>
+nnoremap <leader>n :noh<CR>
 
-" Map Ctrl-Backspace to delete the previous word in insert mode.
+" Map Ctrl-Backspace to delete the previous word in insert mode. - doesn't work
 inoremap <C-BS> <C-W>
 
-" open new terminal window in directory
+" open new terminal window in directory (currently unused)
 command T silent execute '!urxvt &'
 command R silent execute '!urxvt -e ranger&'
 
 map <leader>v :vsp<CR>
 map <leader>s :sp<CR>
+map <leader>t :tabnew<CR>
 
 " Fast saving
-nmap <leader>w :w!<cr>
+nmap <C-s> :w!<cr>
 
 "" Speed up scrolling in Vim
 set ttyfast
 
-"Insert linebreaks
+" Ignore case when searching
+"set ignorecase
+
+" Insert linebreaks
 nnoremap <silent> <leader>o :<C-u>call append(line("."),   repeat([""], v:count1))<CR>
 nnoremap <silent> <leader>O :<C-u>call append(line(".")-1, repeat([""], v:count1))<CR>
 
@@ -151,24 +181,9 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-function! CloseHiddenBuffers()
-  " figure out which buffers are visible in any tab
-  let visible = {}
-  for t in range(1, tabpagenr('$'))
-    for b in tabpagebuflist(t)
-      let visible[b] = 1
-    endfor
-  endfor
-  " close any buffer that's loaded and not visible
-  for b in range(1, bufnr('$'))
-    if bufloaded(b) && !has_key(visible, b)
-      exe 'bd ' . b
-    endif
-  endfor
-endfun
 
 " Quick reformat of entire document TODO - check which plugin this is!
-nnoremap <leader>F :Format<CR>
+"nnoremap <leader>F :Format<CR>
 
 " More natural split opening
 set splitbelow
@@ -200,17 +215,27 @@ nmap gz :call ZoomWindow()<CR>
 " Delete all buffers except the one I'm currently in
 command! BufOnly execute '%bdelete|edit #|normal `"'
 
+function! DeleteHiddenBuffers()
+  let tpbl=[]
+  let closed = 0
+  call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+  for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
+    if getbufvar(buf, '&mod') == 0
+      silent execute 'bwipeout' buf
+      let closed += 1
+    endif
+  endfor
+  echo "Closed ".closed." hidden buffers"
+endfunction
+command! DeleteHiddenBuffers :call DeleteHiddenBuffers()<CR>
+
+
 "Set python3 location
 let g:python3_host_prog = "/bin/python3"
 
-" make zsh invocation in vim interactive (forgot what this does)
+" make zsh invocation in vim interactive - disabled because it made one of the plugins very slow
 "set shell=zsh\ -i
-"
-" ****************** Trailing configs below
 
-" ** Window resizing
-" auto resize windows
-"autocmd VimResized * wincmd =
 nmap <Leader>= <C-W>= 
 
 map <silent> <A-h> <C-w>5<
@@ -219,10 +244,7 @@ map <silent> <A-k> <C-W>5+
 map <silent> <A-l> <C-w>5>
 
 
-" ** Quick list navigation
-map <silent><F4> :cn<CR>
-map <silent><F3> :cp<CR>
-
+""" I think this was an attempt to be able to allow intuitive closing of location and quick list easily """
 function! GetBufferList()
   redir =>buflist
   silent! ls!
@@ -253,7 +275,9 @@ endfunction
 "nmap <silent> <leader>l :call ToggleList("Location List", 'l')<CR>
 "nmap <silent> <leader>q :call ToggleList("Quickfix List", 'c')<CR>
 nmap <silent> <leader>q :copen<CR>
-nmap <silent> <backspace>q :cclose<CR>
+nmap <silent> <leader>q :copen<CR>
+nmap <silent> <backspace>q :ccl<CR>
+nmap <silent> <backspace>o :only<CR>
 
 " **attemp to add closing tags
 iabbrev </ </<C-X><C-O>
@@ -262,10 +286,10 @@ iabbrev </ </<C-X><C-O>
 let g:goyo_width = 120
 map <silent><Leader>z :Goyo<Cr>
 
-" ** Vim bookmarks
-"""""""""""""""""""""""""""""""""""""""
+
 " ----- FZF configs {{{1
-""""""""""""""""""""""""""""""""""""""
+
+nnoremap ,g :GFiles<CR>
 nnoremap ,f :Files<CR>
 nnoremap ,b :Buffers<CR>
 nnoremap ,C :Commands<CR>
@@ -273,7 +297,7 @@ nnoremap ,M :Maps<CR>
 nnoremap ,m :Marks<CR>
 nnoremap ,w :Windows<cr>
 " ripgrep
-nnoremap ,r :Rg<cr>
+nnoremap ,rg :Rg<cr>
 " Ripgrep word on cursor
 nnoremap ,rs :Rg <c-r><c-w><CR>
 " Buffer history
@@ -282,6 +306,9 @@ nnoremap ,h :History<CR>
 nnoremap ,Hc :History:<CR>
 " Search History
 nnoremap ,Hs :History/<CR>
+
+command! Directories :call fzf#run(fzf#wrap({'source': 'find * -type d'}))<CR>
+nnoremap ,d :Directories<CR>
 
 " Extend all fuzzy commands to the quick fix list
 function! s:build_quickfix_list(lines)
@@ -297,36 +324,17 @@ let g:fzf_action = {
   \ 'ctrl-v': 'vsplit' }
 
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+command! -bang -nargs=* Rg call fzf#vim#grep("rg  --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 
-" Customize fzf colors to match your color scheme
-" - fzf#wrap translates this to a set of `--color` options
-"let g:fzf_colors =
-"\ { 'fg':      ['fg', 'Normal'],
-  "\ 'bg':      ['bg', 'Normal'],
-  "\ 'hl':      ['fg', 'Comment'],
-  "\ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  "\ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  "\ 'hl+':     ['fg', 'Statement'],
-  "\ 'info':    ['fg', 'PreProc'],
-  "\ 'border':  ['fg', 'Ignore'],
-  "\ 'prompt':  ['fg', 'Conditional'],
-  "\ 'pointer': ['fg', 'Exception'],
-  "\ 'marker':  ['fg', 'Keyword'],
-  "\ 'spinner': ['fg', 'Label'],
-  "\ 'header':  ['fg', 'Comment'] }
-
- "Get text in files with Rg
-command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
-"""""""""""""""""""""""""""""""""""""""
 " ----- Nerd Commenter configs {{{1
-""""""""""""""""""""""""""""""""""""""
+
 let g:NERDCustomDelimiters={
       \ 'javascript': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
       \}
 
-"""""""""""""""""""""""""""""""""""""
+
 " ----- Theme/Color settings {{{1
-""""""""""""""""""""""""""""""""""""""
+
 " Color Scheme
 colorscheme gruvbox
 set bg=light
@@ -346,23 +354,21 @@ let g:vim_jsx_pretty_colorful_config = 1
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#coc#enabled = 0
 
-"if airline#util#winwidth() > 79
-  "let g:airline_section_z = airline#section#create(['windowswap', 'obsession', '%3p%%'.spc, 'linenr', 'maxlinenr', spc.':%3v'])
-"else
-"endif
-""""""""""""""""""""""""""""""""""""""
+
 " ----- Vim easymotion config{{{1
-""""""""""""""""""""""""""""""""""""""
+
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-let g:EasyMotion_keys='idasonetuh'
+let g:EasyMotion_keys='idasonetuhjkcr'
 
 nmap s <Plug>(easymotion-overwin-f2)
 nmap t <Plug>(easymotion-t2)
 nmap T <Plug>(easymotion-T2)
 nmap <leader>m <Plug>(easymotion-repeat)
+" Move to line
+"map <Leader>L <Plug>(easymotion-bd-jk)
+"nmap <Leader>L <Plug>(easymotion-overwin-line)
 
-" Jump to anywhere you want with minimal keystrokes, with just one key binding.
-" `s{char}{label}`
+" Jump to anywhere you want with minimal keystrokes, with just one key bindC-n `s{char}{label}`
 "nmap s <Plug>(easymotion-overwin-f)
 " or
 " `s{char}{char}{label}`
@@ -379,19 +385,20 @@ hi EasyMotionTarget2 ctermbg=none ctermfg=yellow
 "hi EasyMotionTarget2First ctermbg=none ctermfg=red
 "hi EasyMotionTarget2Second ctermbg=none ctermfg=yellow
 
-" Line motions
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
+" Line motions - disabled because it seems to take up alot of resources 
+"map <Leader>j <Plug>(easymotion-j)
+"map <Leader>k <Plug>(easymotion-k)
 "map <Leader>w <Plug>(easymotion-w)
 "map <Leader>e <Plug>(easymotion-e)
 "map <Leader>b <Plug>(easymotion-b)
+"map <Leader>ge <Plug>(easymotion-ge)
 
 " Hack to prevent linting errors when using moniots
 autocmd User EasyMotionPromptBegin silent! CocDisable
 autocmd User EasyMotionPromptEnd silent! CocEnable
-""""""""""""""""""""""""""""""""""""""
+
 " ----- Text, tab, folds, and index related {{{1
-""""""""""""""""""""""""""""""""""""""
+
 " Use spaces instead of tabs
 set expandtab
 
@@ -415,13 +422,13 @@ set wrap "Wrap lines
 set cindent
 set cinkeys-=0#
 set indentkeys-=0#
+nmap <leader>gf :GitGutterFold<CR>
 
 
-""""""""""""""""""""""""""""""""""""""
+
 " ----- Navigation configs {{{1
-""""""""""""""""""""""""""""""""""""""
+
 " Trying out netrw
-map <leader>n :Exp<CR>
 let g:netrw_liststyle=3
 autocmd FileType netrw setl bufhidden=wipe
 
@@ -434,14 +441,14 @@ autocmd FileType netrw setl bufhidden=wipe
 "let g:NERDTreeHighlightFolders = 1 " enables folder icon highlighting using exact match
 "let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
 
-""""""""""""""""""""""""""""""""""""""
+
 " ----- Debugger config {{{1
-""""""""""""""""""""""""""""""""""""""
+
 nmap <leader>ds :GdbDebugStop <CR>
 
-""""""""""""""""""""""""""""""""""""""
+
 " ----- Floaterm configs {{{1
-""""""""""""""""""""""""""""""""""""""
+" TODO: Add open terminal in current file
 " By default the window floats
 "let g:floaterm_wintype = 'normal'
 let g:floaterm_width = 0.9
@@ -449,14 +456,14 @@ let g:floaterm_height = 0.5
 let g:floaterm_position='bottom'
 let g:floaterm_keymap_toggle = '<C-Space>' " Replaces alternate backspace
 "let g:floaterm_autoinsert = v:false
-let g:floaterm_keymap_new = '<Leader>to'
-let g:floaterm_keymap_next = '<Leader>tn'
-let g:floaterm_keymap_prev = '<Leader>tp'
+"let g:floaterm_keymap_new = '<Leader>to'
+"let g:floaterm_keymap_next = '<Leader>tn'
+"let g:floaterm_keymap_prev = '<Leader>tp'
 
 map <F1> :FloatermNew! cd %:p:h<CR>
-""""""""""""""""""""""""""""""""""""""
+
 " ----- Latex Vim configs {{{1
-""""""""""""""""""""""""""""""""""""""
+
 let g:tex_flavor = 'latex'
 if has('nvim')
   let g:vimtex_compiler_progname = 'nvr'
@@ -466,23 +473,21 @@ let g:vimtex_latexmk_continuous = 1
 "use SumatraPDF if you are on Windows
 let g:vimtex_view_method = 'zathura'
 
-""""""""""""""""""""""""""""""""""""""
+
 " ----- Nvim-r configs {{{1
-""""""""""""""""""""""""""""""""""""""
 " '__' to convert into '<-'
 let g:R_assign = 2
 
-""""""""""""""""""""""""""""""""""""""
+
 " ----- ALE configs {{{1
-""""""""""""""""""""""""""""""""""""""
-map <leader>at :ALEToggle<CR>
-map <leader>an :ALENext<CR>
-map <leader>ap :ALEPrevious<CR>
+map <leader>a :ALEToggle<CR>
+map <C-n> :ALENext<CR>
+map <C-p> :ALEPrevious<CR>
 "read .tsx files as .ts
 let g:ale_linter_aliases = {'typescriptreact': 'typescript'}
 
 " Note to future self, there may be unnecessry double checking with clangtidy's static-analser and clang
-let g:ale_linters = {'cpp': ['clangtidy', 'cppcheck'], 'haskell': ['hlint', 'hdevtools', 'hfmt'], 'javascript':['flow-language-server'] }
+let g:ale_linters = {'cpp': ['clangtidy', 'cppcheck'], 'haskell': ['hlint', 'hdevtools', 'hfmt'], 'javascript':['flow'] }
 " Still don't know if i really need clangcheck
 "let g:ale_linters = {'cpp': ['clangtidy','clangcheck','cppcheck']}
 "let g:ale_cpp_clangcheck_executable = 'clang-check'
@@ -503,17 +508,10 @@ let g:ale_echo_msg_warning_str = 'W'
 let g:ale_linters_ignore = {'typescript': ['tslint']}
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-""""""""""""""""""""""""""""""""""""""
-" ----- COC.nvim config {{{1
-""""""""""""""""""""""""""""""""""""""
-" List of extensions used for book keeping
-" coc-snippets, coc-prettier, coc-marketplace, coc-lists, coc-eslint
-" coc-emmet, coc-vimtex, coc-tsserver, coc-python, coc-json
-" coc-java-debug, coc-java, coc-css, coc-clangd, coc-r-lsp
 
+" ----- COC.nvim config {{{1
 let g:coc_global_extensions = [
       \'coc-json',
-      \'coc-git',
       \'coc-snippets',
       \'coc-prettier',
       \'coc-marketplace',
@@ -604,8 +602,8 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
-" Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
+" Symbol renaming. TODO: Remove the autoformatting that happens
+"nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
@@ -680,18 +678,27 @@ nnoremap <silent> ,p  :<C-u>CocListResume<CR>
 " grep search for phrase in cwd
 "nnoremap <silent> ,g  :<C-u>CocList -I grep<CR>
 
-""""""""""""""""""""""""""""""""""""""
-" ----- Vim wiki configs {{{1
-""""""""""""""""""""""""""""""""""""""
-let g:vimwiki_map_prefix = '<Leader>W'
-let g:vimwiki_table_auto_fmt = 1
 
+" ----- Vim wiki configs {{{1
+"let g:vimwiki_map_prefix = '<Leader>W'
+let g:vimwiki_table_auto_fmt = 1
+nmap <Leader>wl <Plug>VimwikiNextLink
 
 " ----- Git shortcuts {{{1
-nnoremap <leader>G :Git<CR>
+nnoremap <leader>G :Git 
+nnoremap <leader>gd :Gvdiffsplit<CR>
+nnoremap <leader>gs :Git<CR> 
 nnoremap <leader>gb :Git blame<CR>
-nnoremap <leader>gd :Git diff -- %<CR>
-nnoremap <leader>gdt :Git difftool<CR>
-nnoremap <leader>gcl :Gclog -- %<CR>
-nnoremap <leader>gds :Gvdiffsplit<CR>
+nnoremap <leader>gt :Git difftool<CR>
+nnoremap <leader>gl :Gclog -- %<CR>
+" Show history of current file
+nnoremap <leader>gh :0Gclog<CR>
 
+
+" ----- Ranger shortcuts {{{1
+let g:ranger_map_keys = 0
+let g:no_plugin_maps = 1
+map <leader>r :Ranger<CR>
+
+" ----- Bclose {{{1
+nnoremap ZC :Bclose<CR>

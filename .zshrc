@@ -161,3 +161,6 @@ fi
 
 # To prevent npm warning
 export FONTAWESOME_TOKEN=1234567890
+
+export GTK_IM_MODULE=ibus
+

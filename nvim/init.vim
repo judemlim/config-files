@@ -6,8 +6,11 @@ call plug#begin('~/.local/share/nvim/plugged')
 """ --- General --- 
 " Improved cursor movement
 Plug 'easymotion/vim-easymotion'
+Plug 'justinmk/vim-sneak'
+Plug 'unblevable/quick-scope'
 
 " Snippets
+"Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " Git integration
@@ -49,6 +52,9 @@ Plug 'tpope/vim-unimpaired'
 " Ability to apply repeat '.' to some commands
 Plug 'tpope/vim-repeat'
 
+" Improved Find and replace (still learning how to use)
+Plug 'brooth/far.vim'
+
 """ --- File navigation ---
 "Plug 'scrooloose/nerdTree'
 Plug 'tpope/vim-vinegar'
@@ -81,7 +87,7 @@ Plug 'matze/vim-tex-fold'
 
 """ --- React/webdev plugins ---  
 " Typescript highlighting
-Plug 'HerringtonDarkholme/yats.vim'
+"Plug 'HerringtonDarkholme/yats.vim'
 " React Syntax Highlighting
 Plug 'maxmellon/vim-jsx-pretty'
 " Javascript syntax highlighting
@@ -115,6 +121,7 @@ Plug 'vimwiki/vimwiki'
 
 """ --- Vim 'zen mode' ---
 Plug 'junegunn/goyo.vim'
+"Plug 'folke/zen-mode.nvim' - needs neovim 0.5
 
 """ --- Intutive book marks ---
 Plug 'MattesGroeger/vim-bookmarks'
@@ -147,20 +154,16 @@ let mapleader = "\<Space>"
 
 " Turn of highlighting
 "map <esc> :noh<cr>
-"nnoremap <CR> :noh<CR><CR>
-"nnoremap <BS> :noh<cr>
 nnoremap <leader>n :noh<CR>
 
-" Map Ctrl-Backspace to delete the previous word in insert mode. - doesn't work
-inoremap <C-BS> <C-W>
-
-" open new terminal window in directory (currently unused)
-command T silent execute '!urxvt &'
-command R silent execute '!urxvt -e ranger&'
+" open new terminal window in directory
+command T execute '!kitty &'
+command R execute '!kitty -e ranger&'
 
 map <leader>v :vsp<CR>
 map <leader>s :sp<CR>
 map <leader>t :tabnew<CR>
+map <leader>T <C-W>T<CR>
 
 " Fast saving
 nmap <C-s> :w!<cr>
@@ -169,11 +172,7 @@ nmap <C-s> :w!<cr>
 set ttyfast
 
 " Ignore case when searching
-"set ignorecase
-
-" Insert linebreaks
-nnoremap <silent> <leader>o :<C-u>call append(line("."),   repeat([""], v:count1))<CR>
-nnoremap <silent> <leader>O :<C-u>call append(line(".")-1, repeat([""], v:count1))<CR>
+set ignorecase
 
 " *** Buffer management
 " Easier split navigation
@@ -182,9 +181,6 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-" Quick reformat of entire document TODO - check which plugin this is!
-"nnoremap <leader>F :Format<CR>
-
 " More natural split opening
 set splitbelow
 set splitright
@@ -192,9 +188,9 @@ set splitright
 " Enable file specific key bindings and features defined in the ftplugin folder
 filetype plugin indent on
 
-" when the pop up appears it allows <C-j> to move selection cursor
-inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
-inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+" when the pop up appears it allows <C-j> to move selection cursor - I don't  think I use this at all
+"inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+"inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 
 " More natural terminal escape
 tnoremap <silent> <Esc> <C-\><C-n><CR>
@@ -244,7 +240,7 @@ map <silent> <A-k> <C-W>5+
 map <silent> <A-l> <C-w>5>
 
 
-""" I think this was an attempt to be able to allow intuitive closing of location and quick list easily """
+""" Toggle location and buffer list
 function! GetBufferList()
   redir =>buflist
   silent! ls!
@@ -272,17 +268,14 @@ function! ToggleList(bufname, pfx)
   endif
 endfunction
 
-"nmap <silent> <leader>l :call ToggleList("Location List", 'l')<CR>
-"nmap <silent> <leader>q :call ToggleList("Quickfix List", 'c')<CR>
-nmap <silent> <leader>q :copen<CR>
-nmap <silent> <leader>q :copen<CR>
-nmap <silent> <backspace>q :ccl<CR>
+nmap <silent> <backspace>l :call ToggleList("Location List", 'l')<CR>
+nmap <silent> <backspace>q :call ToggleList("Quickfix List", 'c')<CR>
 nmap <silent> <backspace>o :only<CR>
 
-" **attemp to add closing tags
+" **attemp to add closing tags - currently using snippets
 iabbrev </ </<C-X><C-O>
 
-" ** Goyo (zen mode copy)
+" ** Goyo (zen mode copy) - There is a new zen mode for nvim 0.5, should check it out
 let g:goyo_width = 120
 map <silent><Leader>z :Goyo<Cr>
 
@@ -296,6 +289,7 @@ nnoremap ,C :Commands<CR>
 nnoremap ,M :Maps<CR>
 nnoremap ,m :Marks<CR>
 nnoremap ,w :Windows<cr>
+nnoremap ,l :Lines<cr>
 " ripgrep
 nnoremap ,rg :Rg<cr>
 " Ripgrep word on cursor
@@ -355,15 +349,24 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#coc#enabled = 0
 
 
-" ----- Vim easymotion config{{{1
+" ----- Vim Quick in buffer navigation {{{1
 
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:EasyMotion_keys='idasonetuhjkcr'
 
-nmap s <Plug>(easymotion-overwin-f2)
-nmap t <Plug>(easymotion-t2)
-nmap T <Plug>(easymotion-T2)
-nmap <leader>m <Plug>(easymotion-repeat)
+" Using owerviw motion because they don't take up 
+" as much cpu for some reason
+nmap <backspace>s <Plug>(easymotion-overwin-f2)
+"nmap s <Plug>(easymotion-s)
+"nmap f <Plug>(easymotion-overwin-f)
+"map <Leader>l <Plug>(easymotion-sol-j)
+"map <Leader>e <Plug>(easymotion-overwin-w)
+"map <Leader>w <Plug>(easymotion-bd-W)
+
+"omap t <Plug>(easymotion-bd-tl)
+"nmap t <Plug>(easymotion-t2)
+"nmap T <Plug>(easymotion-T2)
+"nmap <leader>m <Plug>(easymotion-repeat)
 " Move to line
 "map <Leader>L <Plug>(easymotion-bd-jk)
 "nmap <Leader>L <Plug>(easymotion-overwin-line)
@@ -379,8 +382,8 @@ nmap <leader>m <Plug>(easymotion-repeat)
 "let g:EasyMotion_smartcase = 1
 
 " Different colours for if 1 or 2 keys are needed to be pressed
-hi EasyMotionTarget ctermbg=none ctermfg=red 
-hi EasyMotionTarget2 ctermbg=none ctermfg=yellow
+"hi EasyMotionTarget ctermbg=none ctermfg=red 
+"hi EasyMotionTarget2 ctermbg=none ctermfg=yellow
 
 "hi EasyMotionTarget2First ctermbg=none ctermfg=red
 "hi EasyMotionTarget2Second ctermbg=none ctermfg=yellow
@@ -393,9 +396,36 @@ hi EasyMotionTarget2 ctermbg=none ctermfg=yellow
 "map <Leader>b <Plug>(easymotion-b)
 "map <Leader>ge <Plug>(easymotion-ge)
 
-" Hack to prevent linting errors when using moniots
-autocmd User EasyMotionPromptBegin silent! CocDisable
-autocmd User EasyMotionPromptEnd silent! CocEnable
+" Hack to prevent linting errors when using motions
+"autocmd User EasyMotionPromptBegin silent! CocDisable
+"autocmd User EasyMotionPromptEnd silent! CocEnable
+
+" Easy motion labelling
+let g:sneak#label = 1
+
+" Contrls whether vims 'ignorecase' or 'smartcase' are respected
+let g:sneak#use_ic_scs = 1
+
+" immediately move to the next instance of search, if you move the cursor sneak is back to default behavior
+let g:sneak#s_next = 1
+
+" Cool prompts
+ let g:sneak#prompt = '🔎'
+
+" remap so I can use , and ; with f and t
+map gS <Plug>Sneak_,
+map gs <Plug>Sneak_;
+
+highlight Sneak guifg=black guibg=#00C7DF ctermfg=black ctermbg=cyan
+15
+highlight SneakScope guifg=red guibg=yellow ctermfg=red ctermbg=yellow
+
+" Quick scope
+" Trigger a highlight in the appropriate direction when pressing these keys:
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+highlight QuickScopePrimary guifg='#00C7DF' gui=underline ctermfg=155 cterm=underline
+highlight QuickScopeSecondary guifg='#FF1493' gui=underline ctermfg=81 cterm=underline
+let g:qs_max_chars=150
 
 " ----- Text, tab, folds, and index related {{{1
 
@@ -435,12 +465,6 @@ autocmd FileType netrw setl bufhidden=wipe
 "map <leader>l :NERDTreeToggle %<CR>
 "map <leader>L :NERDTreeToggle<CR>
 
-"let g:NERDTreeFileExtensionHighlightFullName = 1
-"let g:NERDTreeExactMatchHighlightFullName = 1
-"let g:NERDTreePatternMatchHighlightFullName = 1
-"let g:NERDTreeHighlightFolders = 1 " enables folder icon highlighting using exact match
-"let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
-
 
 " ----- Debugger config {{{1
 
@@ -451,16 +475,18 @@ nmap <leader>ds :GdbDebugStop <CR>
 " TODO: Add open terminal in current file
 " By default the window floats
 "let g:floaterm_wintype = 'normal'
-let g:floaterm_width = 0.9
-let g:floaterm_height = 0.5
+let g:floaterm_width = 0.95
+let g:floaterm_height = 0.95
 let g:floaterm_position='bottom'
-let g:floaterm_keymap_toggle = '<C-Space>' " Replaces alternate backspace
+let g:floaterm_keymap_toggle = '<C-backspace>' " Replaces alternate backspace
 "let g:floaterm_autoinsert = v:false
-"let g:floaterm_keymap_new = '<Leader>to'
-"let g:floaterm_keymap_next = '<Leader>tn'
-"let g:floaterm_keymap_prev = '<Leader>tp'
+let g:floaterm_keymap_new    = '<F7>'
+let g:floaterm_keymap_prev   = '<F8>'
+let g:floaterm_keymap_next   = '<F9>'
+let g:floaterm_keymap_toggle = '<F12>'
+let g:floaterm_keymap_kill = '<F4>'
 
-map <F1> :FloatermNew! cd %:p:h<CR>
+map <F6> :FloatermNew! cd %:p:h<CR>
 
 " ----- Latex Vim configs {{{1
 
@@ -501,18 +527,14 @@ let g:ale_cpp_cppcheck_options = '--enable=style'
 "let g:ale_fixers = {'cpp': ['clangtidy','clang-format']}
 "" Use coc-nvim lsp instead
 let g:ale_disable_lsp = 1
-" not working for some reason
-let g:ale_set_balloons = 1
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_linters_ignore = {'typescript': ['tslint']}
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-
 " ----- COC.nvim config {{{1
 let g:coc_global_extensions = [
       \'coc-json',
-      \'coc-snippets',
       \'coc-prettier',
       \'coc-marketplace',
       \'coc-lists',
@@ -527,6 +549,7 @@ let g:coc_global_extensions = [
       \'coc-clangd',
       \'coc-r-lsp',
       \'coc-tsserver',
+      \'coc-snippets',
       \]
 
 
@@ -554,11 +577,12 @@ set signcolumn=yes
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" I got use to C-p and C-n - less pinky movement
+"inoremap <silent><expr> <TAB>
+      "\ pumvisible() ? "\<C-n>" :
+      "\ <SID>check_back_space() ? "\<TAB>" :
+      "\ coc#refresh()
+"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -603,7 +627,7 @@ endfunction
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming. TODO: Remove the autoformatting that happens
-"nmap <leader>rn <Plug>(coc-rename)
+nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
@@ -654,6 +678,15 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 " provide custom statusline: lightline.vim, vim-airline.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
 " Mappings using CoCList - Commented out lines means use fzf instead
 " Show all diagnostics.
 nnoremap <silent> ,a  :<C-u>CocList diagnostics<cr>
@@ -678,6 +711,8 @@ nnoremap <silent> ,p  :<C-u>CocListResume<CR>
 " grep search for phrase in cwd
 "nnoremap <silent> ,g  :<C-u>CocList -I grep<CR>
 
+" Show function hints
+inoremap <C-P> <C-\><C-O>:call CocActionAsync('showSignatureHelp')<cr>
 
 " ----- Vim wiki configs {{{1
 "let g:vimwiki_map_prefix = '<Leader>W'
@@ -698,7 +733,26 @@ nnoremap <leader>gh :0Gclog<CR>
 " ----- Ranger shortcuts {{{1
 let g:ranger_map_keys = 0
 let g:no_plugin_maps = 1
-map <leader>r :Ranger<CR>
+map <leader>ra :Ranger<CR>
 
 " ----- Bclose {{{1
 nnoremap ZC :Bclose<CR>
+
+ "----- Coc Snippets {{}{1
+" Use <C-l> for trigger snippet expand.
+imap <C-l> <Plug>(coc-snippets-expand)
+
+" Use <C-j> for select text for visual placeholder of snippet.
+vmap <C-j> <Plug>(coc-snippets-select)
+
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+let g:coc_snippet_next = '<c-j>'
+
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+let g:coc_snippet_prev = '<c-k>'
+
+" Use <C-j> for both expand and jump (make expand higher priority.)
+imap <C-j> <Plug>(coc-snippets-expand-jump)
+
+" Use <leader>x for convert visual selected code to snippet
+xmap <leader>x  <Plug>(coc-convert-snippet)

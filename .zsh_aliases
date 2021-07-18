@@ -25,26 +25,26 @@ alias 'vpnx'='expressvpn disconnect'
 alias 't'='kitty &!'
 alias 'udd'='urxvt -name dropdown &!'
 alias 'ufe'='urxvt -name file_explorer -e ranger &!'
-alias 'v'='nvim'
 alias 'r'='ranger'
 alias 'f'='fzf'
+alias 'v_old'='nvim'
 alias 'ra'='ranger ~/Videos/Anime'
 alias 'rd'='ranger ~/Downloads'
 alias 'rj'='ranger ~/Documents/Job\ Hunting'
 alias 'rv'='ranger ~/Videos'
 alias 'music'='ranger ~/Music'
-alias 'red'='redshift &!'
-alias 'redx'='redshift -x'
 alias 'pac'='sudo pacman'
 alias 'meditate'='xset -dpms;xset s off'
 # remove binaries in current directories
-alias 'rm_binaries'='find . ! -name "*.*"  -delete'
 
 # Work related
 # bitwarden for work
 alias 'b'='~/AppImages/Bitwarden* &!'
 alias 'devenv-awayco'='kitty --session ~/.config/kitty/awayco_setup.conf &!'
-alias 'vim-awayco'='cd ~/awayco-monorepo && v -S Session.vim'
+alias 'vim-awayco'='cd ~/awayco-monorepo && v'
+alias 'a'='cd ~/awayco-monorepo'
+alias 'v'='~/nvim.appimage'
+#alias 'v'='nvim'
 
 # Quick change configs
 alias 'vim_config'='nvim ~/.config/nvim/'

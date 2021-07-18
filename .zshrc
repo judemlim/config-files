@@ -2,7 +2,8 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 # I already added this before the desktop session initialises in xprofile
 #export PATH=~/.local/bin:$PATH
-
+export PATH=/home/judemlim/.cargo/bin:$PATH
+export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
 # For nvim shell to become interactive (I think this is what it's called)
 export ZDOTDIR=$HOME
 
@@ -121,6 +122,7 @@ source ~/.zsh_aliases
 
 # for bazel autocompletion
 fpath+=(~/.zsh/completion)
+# add cargo binaries to path
 
 # so that completion script does not have to parse Bazel's options 
 # repeatedly
@@ -164,3 +166,5 @@ export FONTAWESOME_TOKEN=1234567890
 
 export GTK_IM_MODULE=ibus
 
+
+alias luamake=/home/judemlim/.config/nvim/lua-language-server/3rd/luamake/compile/luamake

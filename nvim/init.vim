@@ -119,14 +119,9 @@ Plug 'sheerun/vim-polyglot'
 """ --- Note taking ---
 Plug 'vimwiki/vimwiki'
 
-""" --- Vim 'zen mode' ---
-Plug 'junegunn/goyo.vim'
-"Plug 'folke/zen-mode.nvim' - needs neovim 0.5
-
 """ --- Intutive book marks ---
 Plug 'MattesGroeger/vim-bookmarks'
 
-"Plug 'editorconfig/editorconfig-vim'
 
 call plug#end()
 
@@ -152,6 +147,7 @@ let mapleader = "\<Space>"
 "nmap <Space> <Leader>
 "vmap <Space> <Leader>
 
+set encoding=utf-8
 " Turn of highlighting
 "map <esc> :noh<cr>
 nnoremap <leader>n :noh<CR>
@@ -349,7 +345,7 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#coc#enabled = 0
 
 
-" ----- Vim Quick in buffer navigation {{{1
+" ----- Navigation {{{1
 
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:EasyMotion_keys='idasonetuhjkcr'

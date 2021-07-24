@@ -44,7 +44,8 @@ return require('packer').startup(function(use)
   use 'preservim/nerdcommenter'
 
   -- Snippets
-  use 'honza/vim-snippets'
+  --use 'honza/vim-snippets'
+  use 'L3MON4D3/LuaSnip'
 
   -- Git integration
   use 'tpope/vim-fugitive'

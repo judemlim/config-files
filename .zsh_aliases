@@ -41,6 +41,7 @@ alias 'meditate'='xset -dpms;xset s off'
 # bitwarden for work
 alias 'b'='~/AppImages/Bitwarden* &!'
 alias 'devenv-awayco'='kitty --session ~/.config/kitty/awayco_setup.conf &!'
+alias 'devenv-debug-awayco'='kitty --session ~/.config/kitty/awayco_debug_setup.conf &!'
 alias 'vim-awayco'='cd ~/awayco-monorepo && v'
 alias 'a'='cd ~/awayco-monorepo'
 alias 'v'='~/nvim.appimage'
@@ -72,6 +73,8 @@ alias 'm3'='xrandr --output eDP1 --auto --primary --output HDMI1 --right-of eDP1
 alias 'laptop'='xrandr --output eDP1 --auto --primary --output HDMI1 --off; pulseaudio -k; setxkbmap dvorak; setxkbmap -option "ctrl:nocaps"'
 alias 'desktop'='xrandr | grep -q "HDMI1 connected" && xrandr --output HDMI1 --auto --primary --output eDP1 --off && pacmd set-card-profile 0 "output:analog-stereo" && setxkbmap -option && setxkbmap us '
 alias 'family'='xrandr | grep -q "HDMI1 connected" && xrandr --output HDMI1 --auto --primary --output eDP1 --off && pacmd set-card-profile 0 "output:hdmi-surround-extra1"'
+alias 'single'='~/.screenlayout/Home_single.sh'
+alias 'dual'='~/.screenlayout/Home.sh'
 # uni specific
 alias 'unissh'='ssh z3463557@cse.unsw.edu.au'
 alias 'unisftp'='sftp z3463557@cse.unsw.edu.au'

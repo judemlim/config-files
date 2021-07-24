@@ -2,22 +2,56 @@
 local lspconfig = require("lspconfig")
 
 --vim.lsp.set_log_level("info")
-vim.lsp.set_log_level("debug")
+--vim.lsp.set_log_level("debug")
 --vim.lsp.callbacks["textDocument/publishDiagnostics"] = function() end
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-  --virtual_text = {
-    --prefix = "🔥",
-    --spacing = 1,
-  --},
-  virtual_text = false,
-  signs = true,
-  underline = true,
+--vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+  ----virtual_text = {
+    ----prefix = "🔥",
+    ----spacing = 1,
+  ----},
+  --virtual_text = false,
+  --signs = true,
+  --underline = true,
 
-})
+--})
+
+lsp_handler =  function(_, _, params, client_id, _)
+    local config = { -- your config
+      underline = true,
+      --virtual_text = {
+        --prefix = "■ ",
+        --spacing = 4,
+      --},
+      virtual_text = false,
+      signs = true,
+      update_in_insert = false,
+    }
+    local uri = params.uri
+    local bufnr = vim.uri_to_bufnr(uri)
+
+    if not bufnr then
+      return
+    end
+
+    local diagnostics = params.diagnostics
+
+    for i, v in ipairs(diagnostics) do
+      diagnostics[i].message = string.format("%s: %s", v.source, v.message)
+    end
+
+    vim.lsp.diagnostic.save(diagnostics, bufnr, client_id)
+
+    if not vim.api.nvim_buf_is_loaded(bufnr) then
+      return
+    end
+
+    vim.lsp.diagnostic.display(diagnostics, bufnr, client_id, config)
+  end
 
 --buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
+--capabilities.textDocument.publishDiagnostics = false
 capabilities.textDocument.completion.completionItem.resolveSupport = {
   properties = {
     'documentation',
@@ -30,7 +64,7 @@ local on_attach = function(client, bufnr)
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
   require "lsp_signature".on_attach()
 
-  client.resolved_capabilities.document_formatting = false
+  client.resolved_capabilities.document_formatting = true
 
   --Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -41,7 +75,8 @@ local on_attach = function(client, bufnr)
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  -- Use telescope instead
+  --buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-space>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
@@ -50,17 +85,20 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   buf_set_keymap('n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  --buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>Telescope lsp_references<CR>', opts)
+  -- Conflicting with nerd commenter
+  --buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  -- Use telescope instead once I learn how to add to quickfix list
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 
   buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  -- TODO do a buffer/local mapping to save the position to the jump list - m' I believe
-  buf_set_keymap('n', '<C-p>', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  -- Jump to diagnostic and save into jumplist
+  buf_set_keymap('n', '<C-p>', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR><cmd> normal m\'<CR>', opts)
+  buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR><cmd> normal m\'<CR>', opts)
   buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   --buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts) -- let plugin handle basic formatting for now
 
+  buf_set_keymap('n', 'gd', "<cmd>Telescope lsp_definitions<CR>", {})
+  --buf_set_keymap('n', 'gr', "<cmd>Telescope lsp_references<CR>", {})
 end
 is_cfg_present = function(cfg_name)
   -- this returns 1 if it's not present and 0 if it's present
@@ -138,7 +176,10 @@ lspconfig.sumneko_lua.setup {
       }
     }
   },
-  on_attach = on_attach
+  on_attach = on_attach,
+  handlers = {
+    ["textDocument/publishDiagnostics"] = lsp_handler
+  }
 }
 
 ------------------ efm setup (currently used for linting) : could probably just put all the linter configs
@@ -161,11 +202,14 @@ lspconfig.efm.setup{
   settings = {
     --rootMarkers = { "package.json" },
     languages = {
-      javascript = { eslint, prettier },
+      javascript = { eslint, prettier  },
       typescript = { eslint, prettier },
       typescriptreact = { eslint, prettier },
     },
   },
+  handlers = {
+    ["textDocument/publishDiagnostics"] = lsp_handler
+  }
   --handlers = {
     --["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
       --virtual_text = {
@@ -176,7 +220,7 @@ lspconfig.efm.setup{
 }
 
 local isBufferJavascript = function(bufnr, _)
-  return vim.bo[bufnr].filetype == '.js'
+  return vim.bo[bufnr].filetype == 'javascript'
 end
 ------------------ typescript setup
 -- use eslint to handle diagnostics
@@ -185,38 +229,80 @@ lspconfig.tsserver.setup{
   on_attach = on_attach,
   filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
   handlers = {
-  root_dir = lspconfig.util.root_pattern("package.json"),
-  on_new_config = function(new_config, new_root_dir)
-    new_config.cmd_cwd = new_root_dir
-  end,
-    ["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-      -- don't publish diagnostics for javascript right now
-      virtual_text = function()
-      end,
-      underline = function()
-	return (vim.bo.filetype ~= 'javascript')
-      end,
-      signs = function()
-	return (vim.bo.filetype ~= 'javascript')
-      end,
-    }),
+    root_dir = lspconfig.util.root_pattern("package.json"),
+    on_new_config = function(new_config, new_root_dir)
+      new_config.cmd_cwd = new_root_dir
+    end,
+    ["textDocument/publishDiagnostics"] = function(_, _, params, client_id, _)
+      local uri = params.uri
+      local bufnr = vim.uri_to_bufnr(uri)
+      if isBufferJavascript(bufnr) then
+        return
+      end
+
+      local config = { -- your config
+        underline = true,
+        --virtual_text = {
+        --prefix = "■ ",
+        --spacing = 4,
+        --},
+        virtual_text = false,
+        signs = true,
+        update_in_insert = false,
+      }
+      if not bufnr then
+        return
+      end
+
+      local diagnostics = params.diagnostics
+
+      for i, v in ipairs(diagnostics) do
+        diagnostics[i].message = string.format("%s: %s", v.source, v.message)
+      end
+
+      if vim.bo.filetype ~= 'javascript' then
+        vim.lsp.diagnostic.save(diagnostics, bufnr, client_id)
+      else
+        vim.lsp.diagnostic.save({}, bufnr, client_id)
+      end
+
+      if not vim.api.nvim_buf_is_loaded(bufnr) then
+        return
+      end
+
+      vim.lsp.diagnostic.display(diagnostics, bufnr, client_id, config)
+    end
+    ,
   },
 }
 
 ------------------ Javascript setup
 lspconfig.flow.setup{
-  cmd = { "npx", "--no-install", "flow", "lsp" },
-  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "js" },
+  capabilities = capabilities,
+  cmd = { "npx", "flow", "lsp" },
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx" },
   root_dir = lspconfig.util.root_pattern(".flowconfig"),
   on_new_config = function(new_config, new_root_dir)
     new_config.cmd_cwd = new_root_dir -- npx looks for a flow file so it has to be in the same directory as root
   end,
-  on_attach = on_attach
+  flags = {
+    debounce_text_changes = 500,
+  },
+  settings = {
+    enabled = false
+  },
+  handlers = {
+    ["textDocument/publishDiagnostics"] = lsp_handler
+  }
+  --on_attach = on_attach
 }
 
 ------------------ Haskell setup
 lspconfig.hls.setup{
   on_attach = on_attach,
+  handlers = {
+    ["textDocument/publishDiagnostics"] = lsp_handler
+  }
 }
 --vim.api.nvim_set_keymap(
     --'n',
@@ -255,4 +341,20 @@ getServerCapabilities = function()
   local result = dump(table)
   print(result)
 end
+
+
+-- TODO (get formatter working)
+function format_range_operator()
+  local old_func = vim.go.operatorfunc
+  _G.op_func_formatting = function()
+    local start = vim.api.nvim_buf_get_mark(0, '[')
+    local finish = vim.api.nvim_buf_get_mark(0, ']')
+    vim.lsp.buf.range_formatting({}, start, finish)
+    vim.go.operatorfunc = old_func
+    _G.op_func_formatting = nil
+  end
+  vim.go.operatorfunc = 'v:lua.op_func_formatting'
+  vim.api.nvim_feedkeys('g@', 'n', false)
+end
+vim.api.nvim_set_keymap("n", "gm", "<cmd>lua format_range_operator()<CR>", {noremap = true})
 

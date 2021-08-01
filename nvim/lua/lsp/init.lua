@@ -14,7 +14,7 @@ local lspconfig = require("lspconfig")
   --underline = true,
 
 --})
-
+-- Apply project wide diagnostics
 lsp_handler =  function(_, _, params, client_id, _)
     local config = { -- your config
       underline = true,
@@ -98,7 +98,7 @@ local on_attach = function(client, bufnr)
   --buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts) -- let plugin handle basic formatting for now
 
   buf_set_keymap('n', 'gd', "<cmd>Telescope lsp_definitions<CR>", {})
-  --buf_set_keymap('n', 'gr', "<cmd>Telescope lsp_references<CR>", {})
+  buf_set_keymap('n', 'gr', "<cmd>Telescope lsp_references<CR>", {})
 end
 is_cfg_present = function(cfg_name)
   -- this returns 1 if it's not present and 0 if it's present
@@ -208,7 +208,39 @@ lspconfig.efm.setup{
     },
   },
   handlers = {
-    ["textDocument/publishDiagnostics"] = lsp_handler
+    ["textDocument/publishDiagnostics"] = function(_, _, params, client_id, _)
+      local config = { -- your config
+        underline = true,
+        --virtual_text = {
+        --prefix = "■ ",
+        --spacing = 4,
+        --},
+        virtual_text = false,
+        signs = true,
+        update_in_insert = false,
+      }
+      local uri = params.uri
+      local bufnr = vim.uri_to_bufnr(uri)
+
+      if not bufnr then
+        return
+      end
+
+      local diagnostics = params.diagnostics
+
+      for i, v in ipairs(diagnostics) do
+        -- efm v.source in null, it is using eslint to perform diagnostics
+        diagnostics[i].message = string.format("efm: %s", v.message)
+      end
+
+      vim.lsp.diagnostic.save(diagnostics, bufnr, client_id)
+
+      if not vim.api.nvim_buf_is_loaded(bufnr) then
+        return
+      end
+
+      vim.lsp.diagnostic.display(diagnostics, bufnr, client_id, config)
+    end
   }
   --handlers = {
     --["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -224,6 +256,14 @@ local isBufferJavascript = function(bufnr, _)
 end
 ------------------ typescript setup
 -- use eslint to handle diagnostics
+local function organize_imports()
+  local params = {
+    command = "_typescript.organizeImports",
+    arguments = {vim.api.nvim_buf_get_name(0)},
+    title = ""
+  }
+  vim.lsp.buf.execute_command(params)
+end
 lspconfig.tsserver.setup{
   capabilities = capabilities,
   on_attach = on_attach,
@@ -273,6 +313,12 @@ lspconfig.tsserver.setup{
       vim.lsp.diagnostic.display(diagnostics, bufnr, client_id, config)
     end
     ,
+  },
+  commands = {
+    OrganizeImports = {
+      organize_imports,
+      description = "Organize Imports"
+    }
   },
 }
 
@@ -343,18 +389,42 @@ getServerCapabilities = function()
 end
 
 
--- TODO (get formatter working)
-function format_range_operator()
-  local old_func = vim.go.operatorfunc
-  _G.op_func_formatting = function()
-    local start = vim.api.nvim_buf_get_mark(0, '[')
-    local finish = vim.api.nvim_buf_get_mark(0, ']')
-    vim.lsp.buf.range_formatting({}, start, finish)
-    vim.go.operatorfunc = old_func
-    _G.op_func_formatting = nil
-  end
-  vim.go.operatorfunc = 'v:lua.op_func_formatting'
-  vim.api.nvim_feedkeys('g@', 'n', false)
-end
-vim.api.nvim_set_keymap("n", "gm", "<cmd>lua format_range_operator()<CR>", {noremap = true})
+-- TODO (get formatter working) - currently 'mhartington/formatter.nvim'
+--function format_range_operator()
+  --local old_func = vim.go.operatorfunc
+  --_G.op_func_formatting = function()
+    --local start = vim.api.nvim_buf_get_mark(0, '[')
+    --local finish = vim.api.nvim_buf_get_mark(1, ']')
+    --vim.lsp.buf.range_formatting({}, start, finish)
+    --vim.go.operatorfunc = old_func
+    --_G.op_func_formatting = nil
+  --end
+  --vim.go.operatorfunc = 'v:lua.op_func_formatting'
+  --vim.api.nvim_feedkeys('g@', 'n', false)
+--end
+--vim.api.nvim_set_keymap("n", "gm", "<cmd>lua format_range_operator()<CR>", {noremap = true})
 
+-- TODO make function to get projec diagnostics
+--function get_project_diagnostics()
+  --local method = "textDocument/publishDiagnostics"
+  --local default_handler = vim.lsp.handlers[method]
+  --vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
+    --default_handler(err, method, result, client_id, bufnr, config)
+    --local diagnostics = vim.lsp.diagnostic.get_all()
+    --local qflist = {}
+    --for bufnr, diagnostic in pairs(diagnostics) do
+      --for _, d in ipairs(diagnostic) do
+        --d.bufnr = bufnr
+        --d.lnum = d.range.start.line + 1
+        --d.col = d.range.start.character + 1
+        --d.text = d.message
+        --table.insert(qflist, d)
+      --end
+    --end
+    --vim.lsp.util.set_qflist(qflist)
+  --end
+--end
+
+-- TODO organise imports
+-- vim.lsp.buf.execute_command({command = "_typescript.organizeImports", arguments = {vim.fn.expand("%:p")}})
+--

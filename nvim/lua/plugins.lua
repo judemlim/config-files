@@ -4,6 +4,7 @@
 -- vim.cmd [[packadd packer.nvim]]
 -- Only if your version of Neovim doesn't have https://github.com/neovim/neovim/pull/12632 merged
 -- vim._update_package_paths()
+vim.cmd('packadd cfilter')
 
 return require('packer').startup(function(use)
   ---- Packer can manage itself

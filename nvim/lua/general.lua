@@ -72,23 +72,24 @@ vim.api.nvim_set_keymap("n", "<C-Right>", ":vertical resize +2<CR>", { silent = 
 vim.api.nvim_set_keymap("x", "K", ":move '<-2<CR>gv-gv", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("x", "J", ":move '>+1<CR>gv-gv", { noremap = true, silent = true })
 
-vim.g.diagnostics_active = true
-function _G.toggle_diagnostics()
-  if vim.g.diagnostics_active then
-    vim.g.diagnostics_active = false
-    vim.lsp.diagnostic.clear(0)
-    vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
-  else
-    vim.g.diagnostics_active = true
-    vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-      vim.lsp.diagnostic.on_publish_diagnostics, {
-        virtual_text = true,
-        signs = true,
-        underline = true,
-        update_in_insert = false,
-      }
-    )
-  end
-end
+-- Should probably get rid of
+--vim.g.diagnostics_active = true
+--function _G.toggle_diagnostics()
+  --if vim.g.diagnostics_active then
+    --vim.g.diagnostics_active = false
+    --vim.lsp.diagnostic.clear(0)
+    --vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
+  --else
+    --vim.g.diagnostics_active = true
+    --vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+      --vim.lsp.diagnostic.on_publish_diagnostics, {
+        --virtual_text = true,
+        --signs = true,
+        --underline = true,
+        --update_in_insert = false,
+      --}
+    --)
+  --end
+--end
 
-vim.api.nvim_set_keymap('n', '<leader>tt', ':call v:lua.toggle_diagnostics()<CR>', {noremap = true, silent = true})
+--vim.api.nvim_set_keymap('n', '<leader>tt', ':call v:lua.toggle_diagnostics()<CR>', {noremap = true, silent = true})

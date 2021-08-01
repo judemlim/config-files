@@ -177,8 +177,8 @@ require('telescope').setup{
 	--["<c-d>"] = "delete_buffer",
         ["<C-Down>"] = require('telescope.actions').cycle_history_next,
         ["<C-Up>"] = require('telescope.actions').cycle_history_prev,
-        ["<C-q>"] = require("telescope.actions").send_to_qflist + require('telescope.actions').open_qflist,
-        ["<C-s>"] = require("telescope.actions").send_selected_to_qflist + require('telescope.actions').open_qflist,
+        ["<C-s>"] = require("telescope.actions").send_to_qflist + require('telescope.actions').open_qflist,
+        ["<C-S>"] = require("telescope.actions").send_selected_to_qflist + require('telescope.actions').open_qflist,
 
       },
       n = {

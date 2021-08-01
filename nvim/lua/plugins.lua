@@ -1,20 +1,25 @@
 -- This file can be loaded by calling `lua require('plugins')` from your init.vim
 
 -- Only requirednvim-compe if you have packer configured as `opt`
--- vim.cmd [[packadd packer.nvim]]
+ vim.cmd [[packadd cfilter]]
 -- Only if your version of Neovim doesn't have https://github.com/neovim/neovim/pull/12632 merged
 -- vim._update_package_paths()
-vim.cmd('packadd cfilter')
 
 return require('packer').startup(function(use)
   ---- Packer can manage itself
   use 'wbthomason/packer.nvim'
 
-  --use 'puremourning/vimspector'
+  -- Close jsx tags
+  use 'windwp/nvim-ts-autotag'
+
+  -- Debugger
   use 'mfussenegger/nvim-dap'
+  --use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
 
   use "ray-x/lsp_signature.nvim"
-  use{
+
+  -- Save session on close
+  use {
     'rmagatti/auto-session',
     config = function()
       require('auto-session').setup{
@@ -23,19 +28,25 @@ return require('packer').startup(function(use)
     end
   }
 
-  -- New neovim 0.5 things
-  use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
+  --use 'brooth/far.vim'
+
+  use { 'nvim-treesitter/nvim-treesitter', branch = '0.5-compat', run = ':TSUpdate' }
+
+  use {'nvim-treesitter/nvim-treesitter-textobjects', branch = '0.5-compat'}
 
   use { "neovim/nvim-lspconfig" }
 
-  --use 'nvim-lua/completion-nvim'
+  -- Default tree sitter parser for graphql doesn't seem to be working
+  use "jparise/vim-graphql"
 
+  -- Configurable fuzzy finder
   use {
     'nvim-telescope/telescope.nvim',
     requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
   }
   use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
 
+  -- Completion that taps into lsp, snippets, etc.
   use 'hrsh7th/nvim-compe'
 
   -- Improved cursor movement
@@ -43,6 +54,7 @@ return require('packer').startup(function(use)
 
   -- Multiline commenter
   use 'preservim/nerdcommenter'
+  --use 'tpope/vim-commentary'
 
   -- Snippets
   --use 'honza/vim-snippets'
@@ -59,7 +71,7 @@ return require('packer').startup(function(use)
 
   -- Floating terminal implementation
   --use 'voldikss/vim-floaterm'
-  --use {"akinsho/nvim-toggleterm.lua"}
+  use {"akinsho/nvim-toggleterm.lua"}
 
   -- Language server for intellisense code completion
   -- use 'neoclide/coc.nvim', {'branch': 'release'}
@@ -85,7 +97,8 @@ return require('packer').startup(function(use)
   use 'rbgrouleff/bclose.vim'
 
   -- Bracket colors
-  use 'luochen1990/rainbow'
+  --use 'luochen1990/rainbow'
+  use 'p00f/nvim-ts-rainbow'
 
   --- Latex Plugins ---
   --use 'lervag/vimtex'
@@ -106,15 +119,17 @@ return require('packer').startup(function(use)
   --- All syntax hightlighting ---
   -- use 'sheerun/vim-polyglot'
 
-  --- Note taking ---
+  --- Note taking and work planning ---
   use 'vimwiki/vimwiki'
+  use 'mattn/calendar-vim'
+
 
   --- Intutive book marks ---
 
   use 'MattesGroeger/vim-bookmarks'
   use {'tpope/vim-dispatch', opt = true, cmd = {'Dispatch', 'Make', 'Focus', 'Start'}}
   use {'andymass/vim-matchup', event = 'VimEnter'}
-  -- Disabling ale for now - currenty using efm for my linting needs
+  -- Disabling ale for now - currenty using efm with eslint for my diagnostics
   --use {
     --'w0rp/ale',
     --ft = {'sh', 'zsh', 'bash', 'c', 'cpp', 'cmake', 'html', 'markdown', 'racket', 'vim', 'tex', 'js', 'ts', 'jsx', 'tsx', 'lua'},
@@ -123,10 +138,13 @@ return require('packer').startup(function(use)
   --}
   use {'dracula/vim', as = 'dracula'}
   use {'morhetz/gruvbox', as = 'gruvbox'}
-  use {
-    'hoob3rt/lualine.nvim',
-    requires = {'kyazdani42/nvim-web-devicons', opt = true}
-  }
+  use {'jez/vim-colors-solarized'}
+  -- lualine a bit buggy
+  --use {
+    --'hoob3rt/lualine.nvim',
+    --requires = {'kyazdani42/nvim-web-devicons', opt = true}
+  --}
+  use 'vim-airline/vim-airline'
 
   use {
     "folke/zen-mode.nvim",
@@ -139,31 +157,26 @@ return require('packer').startup(function(use)
     end
   }
   -- Lua
-  use {
-    "folke/trouble.nvim",
-    requires = "kyazdani42/nvim-web-devicons",
-    config = function()
-      require("trouble").setup {
-	-- your configuration comes here
-	-- or leave it empty to use the default settings
-	-- refer to the configuration section below
-      }
-    end
-  }
-  use 'folke/lsp-colors.nvim' -- colour virtual text from diagnostics
-  use {
-    'mhartington/formatter.nvim',
-    config = function()
-      require("formatter").setup{}
-    end
-  }
+  --use {
+    --"folke/trouble.nvim",
+    --requires = "kyazdani42/nvim-web-devicons",
+    --config = function()
+      --require("trouble").setup {
+	---- your configuration comes here
+	---- or leave it empty to use the default settings
+	---- refer to the configuration section below
+      --}
+    --end
+  --}
+
+  -- colour virtual text from diagnostics
+  use 'folke/lsp-colors.nvim'
+  use 'mhartington/formatter.nvim'
   use {
     'lewis6991/gitsigns.nvim',
     requires = {
       'nvim-lua/plenary.nvim'
     },
   }
-
-
 end)
 

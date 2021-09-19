@@ -1,5 +1,7 @@
 -------------------------------- General LSP settings
 local lspconfig = require("lspconfig")
+-- additional typescript functionality not yet in typescript server but in vscode and tsservr
+-- still testing
 
 --vim.lsp.set_log_level("info")
 --vim.lsp.set_log_level("debug")
@@ -48,6 +50,49 @@ lsp_handler =  function(_, _, params, client_id, _)
     vim.lsp.diagnostic.display(diagnostics, bufnr, client_id, config)
   end
 
+flow_lsp_handler =  function(_, _, params, client_id, _)
+    local config = { -- your config
+      underline = true,
+      --virtual_text = {
+        --prefix = "■ ",
+        --spacing = 4,
+      --},
+      virtual_text = false,
+      signs = true,
+      update_in_insert = false,
+    }
+    local uri = params.uri
+    local bufnr = vim.uri_to_bufnr(uri)
+
+    if not bufnr then
+      return
+    end
+
+    local diagnostics = params.diagnostics
+
+    for i, v in ipairs(diagnostics) do
+      local related_info_presentation = ""
+      local relatedInformation = v.relatedInformation
+      for i, v in ipairs(relatedInformation) do
+        local start_line = v.location.range.start.line
+        local file_path = v.location.uri
+        local related_uri = string.match(file_path, "file://(.*)")
+        local message = v.message
+        local line = string.format("\n%s: %s:%s", message, related_uri, start_line)
+        related_info_presentation = related_info_presentation .. line
+      end
+      diagnostics[i].message = string.format("%s: %s%s", v.source, v.message, related_info_presentation)
+    end
+
+    vim.lsp.diagnostic.save(diagnostics, bufnr, client_id)
+
+    if not vim.api.nvim_buf_is_loaded(bufnr) then
+      return
+    end
+
+    vim.lsp.diagnostic.display(diagnostics, bufnr, client_id, config)
+  end
+
 --buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
@@ -62,6 +107,7 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
   require "lsp_signature".on_attach()
 
   client.resolved_capabilities.document_formatting = true
@@ -86,7 +132,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   -- Conflicting with nerd commenter
-  --buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  -- buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   -- Use telescope instead once I learn how to add to quickfix list
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 
@@ -115,6 +161,7 @@ local is_using_eslint = function(_, _, result, client_id)
 end
 
 local eslint = {
+  -- lintCommand = "./node_modules/.bin/eslint --fix './src/**/*'",
   lintCommand = "eslint_d -f visualstudio  --stdin --stdin-filename ${INPUT}",
   lintFormats = {
     "%f(%l,%c): %tarning %m",
@@ -241,14 +288,20 @@ lspconfig.efm.setup{
 
       vim.lsp.diagnostic.display(diagnostics, bufnr, client_id, config)
     end
-  }
-  --handlers = {
-    --["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-      --virtual_text = {
-	--prefix = "ⓔ",
-      --},
-    --}),
-  --},
+  },
+  -- commands = {
+  --   EslintProject = {
+  --     organize_imports,
+  --     description = "Get eslint diagnostics"
+  --   }
+  -- },
+  -- handlers = {
+  --   ["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+  --     virtual_text = {
+  --       prefix = "ⓔ",
+  --     },
+  --   }),
+  -- },
 }
 
 local isBufferJavascript = function(bufnr, _)
@@ -312,7 +365,7 @@ lspconfig.tsserver.setup{
 
       vim.lsp.diagnostic.display(diagnostics, bufnr, client_id, config)
     end
-    ,
+    -- ,
   },
   commands = {
     OrganizeImports = {
@@ -323,6 +376,7 @@ lspconfig.tsserver.setup{
 }
 
 ------------------ Javascript setup
+
 lspconfig.flow.setup{
   capabilities = capabilities,
   cmd = { "npx", "flow", "lsp" },
@@ -338,9 +392,10 @@ lspconfig.flow.setup{
     enabled = false
   },
   handlers = {
-    ["textDocument/publishDiagnostics"] = lsp_handler
-  }
-  --on_attach = on_attach
+    ["textDocument/publishDiagnostics"] = flow_lsp_handler
+  },
+  -- on_attach = require'flow'.on_attach,
+  on_attach = on_attach
 }
 
 ------------------ Haskell setup
@@ -388,6 +443,9 @@ getServerCapabilities = function()
   print(result)
 end
 
+-- require'lspconfig'.graphql.setup{
+--   on_attach = on_attach,
+-- }
 
 -- TODO (get formatter working) - currently 'mhartington/formatter.nvim'
 --function format_range_operator()
@@ -425,6 +483,23 @@ end
   --end
 --end
 
--- TODO organise imports
+-- load eslint diagnostics into quickfix list
+-- :cexpr system("./node_modules/.bin/eslint --format unix --fix './src/**/*'")
 -- vim.lsp.buf.execute_command({command = "_typescript.organizeImports", arguments = {vim.fn.expand("%:p")}})
+function get_project_diagnostics()
+  local diagnostics = vim.lsp.diagnostic.get_all()
+  local qflist = {}
+  for bufnr, diagnostic in pairs(diagnostics) do
+    for _, d in ipairs(diagnostic) do
+      d.bufnr = bufnr
+      d.lnum = d.range.start.line + 1
+      d.col = d.range.start.character + 1
+      d.text = d.message
+      table.insert(qflist, d)
+    end
+  end
+  vim.lsp.util.set_qflist(qflist)
+end
+
+-- TODO organise imports
 --

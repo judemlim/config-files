@@ -474,7 +474,7 @@ nmap <leader>ds :GdbDebugStop <CR>
 let g:floaterm_width = 0.95
 let g:floaterm_height = 0.95
 let g:floaterm_position='bottom'
-let g:floaterm_keymap_toggle = '<C-backspace>' " Replaces alternate backspace
+let g:floaterm_keymap_toggle = '<C-t>' " Replaces alternate backspace
 "let g:floaterm_autoinsert = v:false
 let g:floaterm_keymap_new    = '<F7>'
 let g:floaterm_keymap_prev   = '<F8>'

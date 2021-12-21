@@ -53,19 +53,28 @@ prefix_diagnostic_line_with_lsp = function (_, params, ctx, config)
       -- NOTE: This is screwing up the quickfix list results somehow
       -- NOTE: There is room for improvement for formatting. I may want to have a different formatting
       -- function for each language server.
-      if relatedInformation then
+      -- NOTE: Next statement below checks if the table is empty
+      if relatedInformation and next(relatedInformation) ~= nil then
         for _, v in ipairs(relatedInformation) do
           local start_line = v.location.range.start.line
-          local file_path = v.location.uri
-          local related_uri = string.match(file_path, "file://(.*)")
-          -- Failed to find match
-          if not related_uri or related_uri== nil then
-             goto skip_to_next
-          end
-          local message = v.message
-          local line = string.format("\n%s: %s:%s", message, related_uri, start_line)
-          related_info_presentation = related_info_presentation .. line
 
+          local file_path = v.location.uri
+          -- If uri doesn't exist on the filepath then the error message is not what I expect
+          if file_path == nil then
+            local message = v.message
+            local line = string.format("\n%s", message)
+            related_info_presentation = related_info_presentation .. line
+          else
+            local related_uri = string.match(file_path, "file://(.*)")
+            -- Failed to find match
+            if not related_uri or related_uri == nil then
+              -- Analogue of `continue` in other languages for loops
+               goto skip_to_next
+            end
+            local message = v.message
+            local line = string.format("\n%s: %s:%s", message, related_uri, start_line)
+            related_info_presentation = related_info_presentation .. line
+          end
           ::skip_to_next::
         end
       end
@@ -73,6 +82,15 @@ prefix_diagnostic_line_with_lsp = function (_, params, ctx, config)
 
     end
     vim.lsp.diagnostic.on_publish_diagnostics({}, params, ctx, config)
+end
+
+-- Inject 'efm' prefix info into the diagnostics line
+efm_diagnostics = function (_, params, ctx, config) 
+    local diagnostics = params.diagnostics
+    for i, v in ipairs(diagnostics) do
+      diagnostics[i].message = string.format("efm: %s", v.message)
+    end
+    prefix_diagnostic_line_with_lsp({}, params, ctx, config)
 end
 
 tsserver_diagnostics = function (_, params, ctx, config) 
@@ -89,15 +107,18 @@ tsserver_diagnostics = function (_, params, ctx, config)
     prefix_diagnostic_line_with_lsp({}, params, ctx, config)
 end
 
+lsp_diagnostic_display_config = {
+  -- Enable underline, use default values
+  underline = true,
+  -- Enable virtual text, override spacing to 4
+  virtual_text = false,
+  signs = true,
+  update_in_insert = false,
+}
+
 simple_diagnostic_info = vim.lsp.with(
-  prefix_diagnostic_line_with_lsp, {
-    -- Enable underline, use default values
-    underline = true,
-    -- Enable virtual text, override spacing to 4
-    virtual_text = false,
-    signs = true,
-    update_in_insert = false,
-  })
+  prefix_diagnostic_line_with_lsp, lsp_diagnostic_display_config
+)
 
 
 --buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
@@ -264,7 +285,7 @@ lspconfig.efm.setup{
     },
   },
   handlers = {
-    ["textDocument/publishDiagnostics"] = simple_diagnostic_info
+    ["textDocument/publishDiagnostics"] = vim.lsp.with(efm_diagnostics, lsp_diagnostic_display_config)
   },
 }
 
@@ -291,14 +312,7 @@ lspconfig.tsserver.setup{
       new_config.cmd_cwd = new_root_dir
     end,
     ["textDocument/publishDiagnostics"] = vim.lsp.with(
-      tsserver_diagnostics, {
-        -- Enable underline, use default values
-        underline = true,
-        -- Enable virtual text, override spacing to 4
-        virtual_text = false,
-        signs = true,
-        update_in_insert = false,
-      }
+      tsserver_diagnostics, lsp_diagnostic_display_config
     )
    },
   commands = {

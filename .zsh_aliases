@@ -44,8 +44,7 @@ alias 'devenv-awayco'='kitty --session ~/.config/kitty/awayco_setup.conf &!'
 alias 'devenv-debug-awayco'='kitty --session ~/.config/kitty/awayco_debug_setup.conf &!'
 alias 'vim-awayco'='cd ~/awayco-monorepo && v'
 alias 'a'='cd ~/awayco-monorepo'
-alias 'v'='~/nvim.appimage'
-#alias 'v'='nvim'
+alias 'v'='nvim'
 
 # Quick change configs
 alias 'vim_config'='nvim ~/.config/nvim/'
@@ -58,7 +57,7 @@ alias 'functions_config'='nvim ~/.bash_functions'
 
 # keyboard mappings
 alias 'usk'='setxkbmap us'
-alias 'dvk'='setxkbmap dvorak'
+alias 'dvk'='setxkbmap dvorak -option "ctrl:nocaps"'
 
 # weather lookup
 alias 'wtr'='curl wttr.in/pemulwuy'
@@ -82,6 +81,7 @@ alias 'unisftp'='sftp z3463557@cse.unsw.edu.au'
 # Applications
 alias 'libre'='libreoffice &' 
 alias 'nix'='NixNote2-x86_64.AppImage -style=GTK+ >> /dev/null 2>&1 &!'
+alias 'audacity'='~/audacity-linux-3.1.1-x86_64.AppImage'
 
 # Projects
 alias 'website'='cd ~/website'

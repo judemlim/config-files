@@ -78,8 +78,14 @@ prefix_diagnostic_line_with_lsp = function (_, params, ctx, config)
           ::skip_to_next::
         end
       end
-      diagnostics[i].message = string.format("%s: %s%s", v.source, v.message, related_info_presentation)
 
+      local source = v.source
+      if (source == nil) then
+        source = ''
+      else
+        source = source .. ': '
+      end
+      diagnostics[i].message = string.format("%s%s%s", source, v.message, related_info_presentation)
     end
     vim.lsp.diagnostic.on_publish_diagnostics({}, params, ctx, config)
 end
@@ -88,7 +94,7 @@ end
 efm_diagnostics = function (_, params, ctx, config) 
     local diagnostics = params.diagnostics
     for i, v in ipairs(diagnostics) do
-      diagnostics[i].message = string.format("efm: %s", v.message)
+      diagnostics[i].message = string.format("efm %s", v.message)
     end
     prefix_diagnostic_line_with_lsp({}, params, ctx, config)
 end

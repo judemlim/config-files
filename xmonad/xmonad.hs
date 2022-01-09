@@ -36,6 +36,8 @@ import XMonad.Hooks.Place (placeHook, withGaps, smart)
 import XMonad.Actions.CopyWindow -- for dwm window style tagging
 import XMonad.Actions.GridSelect
 import XMonad.Actions.CycleWS
+import XMonad.Actions.UpdatePointer -- mouse follows focus
+
 -- layout 
 import XMonad.Layout.Renamed (renamed, Rename(Replace))
 import XMonad.Layout.LayoutHints
@@ -46,8 +48,8 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.Reflect
 import XMonad.Layout.ThreeColumns
-import XMonad.Layout.Circle
 import XMonad.Layout.CenteredMaster
+import XMonad.Layout.MultiColumns
 
 ------------------------------------------------------------------------
 -- config
@@ -78,6 +80,8 @@ myStartupHook = do
       --spawnOnce "sudo logid"  
       --spawnOnce "psensor &"  
       spawnOnce "sleep 10 && thunderbird "  
+      spawnOnce "sleep 1 && ~/.screenlayout/Home.sh "  
+      spawnOnce "sleep 1 && slack "  
       spawn "~/Scripts/refresh_wallpaper.sh"  
       spawn "xset r rate 200 25"  
 
@@ -91,7 +95,7 @@ myEventHook = hintsEventHook
 -- layout
 ------------------------------------------------------------------------
 -- using toggleStruts with monocle
-myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| centeredGrid ||| bsp ||| circle 
+myLayout = smartBorders $ avoidStruts $ uniformColumns ||| columns ||| tiled ||| noBorders full ||| grid ||| centeredGrid ||| bsp 
   where
      -- default tiling algorithm partitions the screen into two panes
      -- TODO find out what layout with Hints placement does
@@ -99,6 +103,9 @@ myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| 
 
      -- columns
      columns = renamed [Replace "columns"] $ spacingRaw False (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $ ThreeColMid 1 (3/100) (1/2)
+
+     -- columns
+     uniformColumns = renamed [Replace "uniform"] $ spacingRaw False (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $ multiCol [1] 1 0.01 (-0.5)
 
      -- grid
      grid = renamed [Replace "grid"] $ spacingRaw True (Border 10 0 10 0) True (Border 0 10 0 10) True $ reflectHoriz $  Grid (16/10)
@@ -112,9 +119,6 @@ myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| 
      -- bsp
      bsp = renamed [Replace "bsp"] $ reflectHoriz $ emptyBSP
 
-     -- circle
-     circle = renamed [Replace "circle"] $ reflectHoriz $ Circle
-      
      -- The default number of windows in the master pane
      nmaster = 1
      
@@ -143,6 +147,8 @@ myLayout = smartBorders $ avoidStruts $ columns ||| tiled ||| full ||| grid ||| 
 myManageHook = composeAll
     [ className =? "mpv"            --> doRectFloat (W.RationalRect (1 % 4) (1 % 4) (1 % 2) (1 % 2))
     , className =? "Gimp"           --> doFloat
+    , className =? "spotify"           --> doFloat
+    , title =? "Plover"           --> doFloat
     , className  =? "Thunderbird" --> doShift "9"
     , className  =? "Psensor" --> doShift "6"
     , className =? "Firefox" <&&> resource =? "Toolkit" --> doFloat -- firefox pip
@@ -158,9 +164,9 @@ myManageHook = composeAll
 myKeys =
     [("M-" ++ m ++ k, windows $ f i)
         | (i, k) <- zip (myWorkspaces) (map show [1 :: Int ..])
-        , (f, m) <- [(W.view, ""), (W.shift, "S-"), (copy, "S-C-")]]
+        , (f, m) <- [(W.greedyView, ""), (W.shift, "S-"), (copy, "S-C-")]]
     ++
-    [("M-a", windows copyToAll)   -- copy window to all workspaces
+    [("M-v", windows copyToAll)   -- copy window to all workspaces
      , ("M-z", killAllOtherCopies)  -- kill copies of window on other workspaces
      , ("M-<Right>", moveTo Next NonEmptyWS)
      , ("M-<Left>", moveTo Prev NonEmptyWS)
@@ -171,15 +177,14 @@ myKeys =
      , ("M-l", sendMessage Shrink)
      , ("M-s", sendMessage ToggleStruts)
      , ("M-f", sendMessage $ JumpToLayout "full")
+     , ("M-u", sendMessage $ JumpToLayout "uniform")
+     , ("M-c", sendMessage $ JumpToLayout "columns")
      , ("M-t", sendMessage $ JumpToLayout "tall")
      , ("M-g", sendMessage $ JumpToLayout "grid")
      , ("M-S-g", sendMessage $ JumpToLayout "centeredGrid")
      , ("M-b", sendMessage $ JumpToLayout "bsp")
-     , ("M-c", sendMessage $ JumpToLayout "columns")
-     , ("M-o", sendMessage $ JumpToLayout "circle")
-     , ("M-r", withFocused $ windows . W.sink)
-     , ("M-n", refresh)
-     , ("M-w", goToSelected defaultGSConfig) -- show all windows
+     , ("M-/", withFocused $ windows . W.sink)
+     --, ("M-n", refresh)
      , ("M-<Backspace>", windows W.swapMaster)
      , ("M-S-<Backspace>", spawn myTerminal)
      , ("M-C-<Return>", namedScratchpadAction scratchpads "terminal")
@@ -188,10 +193,13 @@ myKeys =
      , ("M-C-m", namedScratchpadAction scratchpads "spotify")
      , ("M-C-z", namedScratchpadAction scratchpads "todoList")
      , ("M-C-n", namedScratchpadAction scratchpads "nixnote")
-     , ("M-C-p", namedScratchpadAction scratchpads "pulseaudio")
-     , ("M-e", spawn "synapse toggle")
+     , ("M-C-a", namedScratchpadAction scratchpads "pavucontrol")
+     , ("M-C-b", namedScratchpadAction scratchpads "bluetooth")
+     , ("M-C-p", namedScratchpadAction scratchpads "plover")
      , ("Print", spawn "spectacle")
-     , ("M-p", spawn "rofi -show combi -modi combi") -- rofi
+     , ("M-p", spawn "rofi -show drun")
+     -- Pneumonic is 'all'
+     , ("M-a", spawn "rofi -show window")
      , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
      , ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%")
      , ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%")
@@ -206,25 +214,30 @@ myKeys =
 scratchpads :: [NamedScratchpad]
 scratchpads = [ 
     NS "terminal" spawnTerm findTerm manageTerm,
+    -- first string class, second string className
     NS "ranger" "kitty --name fileExplorer -e ranger" (resource =? "fileExplorer") manageTerm,
+    NS "plover" "kitty --name plover -e ~/plover-4.0.0.dev10-x86_64.AppImage --gui console" (resource =? "plover") ploverFloat,
+    NS "bluetooth" "blueman-manager" (className =? "Blueman-manager") manageTerm,
     NS "spotify" "spotify" (className =? "Spotify") manageTerm,
     NS "todoList" "superproductivity" (className  =? "superProductivity")
           (customFloating $ W.RationalRect (1/3) (1/6) (1/3) (2/3)), 
     NS "nixnote" "nixnote2" (className =? "nixnote2") nonFloating,
-    NS "pulseaudio" "pavucontrol" (className  =? "Pavucontrol")
+    NS "pavucontrol" "pavucontrol" (className  =? "Pavucontrol")
           (manageTerm) 
     ]
     where
     spawnTerm  = myTerminal ++  " --name scratchpad"
     findTerm   = resource =? "scratchpad"
     manageTerm = customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3)
+    ploverFloat = customFloating $ W.RationalRect (11/13) (1/50) (1/8) (1/4)
     
 ------------------------------------------------------------------------
 -- main
 ------------------------------------------------------------------------
 
 main = do
-    xmproc <- spawnPipe "/usr/bin/xmobar -x 0 /home/judemichaellim/.config/xmobar/xmobarrc"
+    xmproc0 <- spawnPipe "xmobar -x 0 $HOME/.config/xmobar/xmobarrc"
+    xmproc1 <- spawnPipe "xmobar -x 1 $HOME/.config/xmobar/xmobarrc"
     xmonad $ ewmh desktopConfig
         { manageHook = manageDocks <+> myManageHook <+> manageHook desktopConfig
         , startupHook        = myStartupHook
@@ -237,7 +250,7 @@ main = do
         , normalBorderColor  = myNormalBorderColor
         , focusedBorderColor = myFocusedBorderColor
         , logHook = dynamicLogWithPP xmobarPP
-                        { ppOutput = \x -> hPutStrLn xmproc x
+                        { ppOutput = \x -> hPutStrLn xmproc0 x  >> hPutStrLn xmproc1 x
                         , ppCurrent = xmobarColor myppCurrent "" . wrap "[" "]" -- Current workspace in xmobar
                         , ppVisible = xmobarColor myppVisible ""                -- Visible but not current workspace
                         , ppHidden = xmobarColor myppHidden "" . wrap "+" ""   -- Hidden workspaces in xmobar

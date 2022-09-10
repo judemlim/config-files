@@ -4,7 +4,7 @@ local lspconfig = require("lspconfig")
 -- still testing
 
 --vim.lsp.set_log_level("info")
---vim.lsp.set_log_level("debug")
+-- vim.lsp.set_log_level("debug")
 --vim.lsp.callbacks["textDocument/publishDiagnostics"] = function() end
 --vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
   ----virtual_text = {
@@ -104,6 +104,7 @@ tsserver_diagnostics = function (_, params, ctx, config)
     local bufnr = vim.uri_to_bufnr(uri)
     -- NOTE: I want to use tsserver's definitions/implementation functionality on js files
     -- But I don't want to publish it's diagnostics on js files
+    -- TODO: Check if the 
     local isBufferJavascript = function(bufnr)
       return vim.bo[bufnr].filetype == 'javascript'
     end
@@ -127,7 +128,6 @@ simple_diagnostic_info = vim.lsp.with(
 )
 
 
---buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 --capabilities.textDocument.publishDiagnostics = false
@@ -139,13 +139,14 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
   }
 }
 
+
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
   require "lsp_signature".on_attach()
 
-  client.resolved_capabilities.document_formatting = true
+  -- client.resolved_capabilities.document_formatting = true
 
   --Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -158,7 +159,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   -- Use telescope instead
   --buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'K', '<Cmd>lua vim.diagnostic.open_float()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-space>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
@@ -173,13 +174,65 @@ local on_attach = function(client, bufnr)
 
   buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   -- Jump to diagnostic and save into jumplist
-  buf_set_keymap('n', '<C-p>', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR><cmd> normal m\'<CR>', opts)
-  buf_set_keymap('n', '<C-n>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR><cmd> normal m\'<CR>', opts)
+  buf_set_keymap('n', '<C-p>', '<cmd>lua vim.diagnostic.goto_prev()<CR><cmd> normal m\'<CR>', opts)
+  buf_set_keymap('n', '<C-n>', '<cmd>lua vim.diagnostic.goto_next()<CR><cmd> normal m\'<CR>', opts)
   buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   --buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts) -- let plugin handle basic formatting for now
 
   buf_set_keymap('n', 'gd', "<cmd>Telescope lsp_definitions<CR>", {})
   buf_set_keymap('n', 'gr', "<cmd>Telescope lsp_references<CR>", {})
+end
+
+local tsserver_on_attach = function (client, bufnr)
+  local ts_utils = require("nvim-lsp-ts-utils")
+        ts_utils.setup({
+            debug = false,
+            disable_commands = false,
+            enable_import_on_completion = false,
+
+            -- import all
+            import_all_timeout = 5000, -- ms
+            -- lower numbers = higher priority
+            import_all_priorities = {
+                same_file = 1, -- add to existing import statement
+                local_files = 2, -- git files or files with relative path markers
+                buffer_content = 3, -- loaded buffer content
+                buffers = 4, -- loaded buffer names
+            },
+            import_all_scan_buffers = 100,
+            import_all_select_source = false,
+            -- if false will avoid organizing imports
+            always_organize_imports = true,
+
+            -- filter diagnostics
+            filter_out_diagnostics_by_severity = {},
+            filter_out_diagnostics_by_code = {},
+
+            -- inlay hints
+            auto_inlay_hints = true,
+            inlay_hints_highlight = "Comment",
+            inlay_hints_priority = 200, -- priority of the hint extmarks
+            inlay_hints_throttle = 150, -- throttle the inlay hint request
+            inlay_hints_format = { -- format options for individual hint kind
+                Type = {},
+                Parameter = {},
+                Enum = {},
+                -- Example format customization for `Type` kind:
+                -- Type = {
+                --     highlight = "Comment",
+                --     text = function(text)
+                --         return "->" .. text:sub(2)
+                --     end,
+                -- },
+            },
+
+            -- update imports on file move
+            update_imports_on_move = false,
+            require_confirmation_on_move = false,
+            watch_dir = nil,
+        })
+  ts_utils.setup_client(client)
+  on_attach(client, bufnr)
 end
 
 -- NOTE: That this will probably break after the new changes
@@ -234,7 +287,7 @@ if vim.fn.has("mac") == 1 then
     sumneko_binary = "/Users/" .. USER .. "/.config/nvim/lua-language-server/bin/macOS/lua-language-server"
 elseif vim.fn.has("unix") == 1 then
     sumneko_root_path = "/home/" .. USER .. "/.config/nvim/lua-language-server"
-    sumneko_binary = "/home/" .. USER .. "/.config/nvim/lua-language-server/bin/Linux/lua-language-server"
+    sumneko_binary = "/home/" .. USER .. "/.config/nvim/lua-language-server/bin/lua-language-server"
 else
     print("Unsupported system for sumneko")
 end
@@ -267,33 +320,33 @@ lspconfig.sumneko_lua.setup {
 
 ------------------ efm setup (currently used for linting) : could probably just put all the linter configs
 -- into tsserver? https://jose-elias-alvarez.medium.com/configuring-neovims-lsp-client-for-typescript-development-5789d58ea9c
-lspconfig.efm.setup{
-  cmd = { "efm-langserver" },
-  on_attach = function(client)
-    client.resolved_capabilities.rename = false
-    client.resolved_capabilities.hover = false
-    client.resolved_capabilities.document_formatting = true
-    client.resolved_capabilities.completion = false
-  end,
-  --on_attach = on_attach,
-  flags = {
-    debounce_text_changes = 500,
-  },
-  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" },
-  --filetypes = { "javascript", "javascriptreact", "svelte" },
-  root_dir = lspconfig.util.root_pattern("package.json"),
-  settings = {
-    --rootMarkers = { "package.json" },
-    languages = {
-      javascript = { eslint, prettier  },
-      typescript = { eslint, prettier },
-      typescriptreact = { eslint, prettier },
-    },
-  },
-  handlers = {
-    ["textDocument/publishDiagnostics"] = vim.lsp.with(efm_diagnostics, lsp_diagnostic_display_config)
-  },
-}
+--lspconfig.efm.setup{
+--  cmd = { "efm-langserver" },
+--  on_attach = function(client)
+--    client.resolved_capabilities.rename = false
+--    client.resolved_capabilities.hover = false
+--    client.resolved_capabilities.document_formatting = true
+--    client.resolved_capabilities.completion = false
+--  end,
+--  --on_attach = on_attach,
+--  flags = {
+--    debounce_text_changes = 500,
+--  },
+--  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" },
+--  --filetypes = { "javascript", "javascriptreact", "svelte" },
+--  root_dir = lspconfig.util.root_pattern("package.json"),
+--  settings = {
+--    --rootMarkers = { "package.json" },
+--    languages = {
+--      javascript = { eslint, prettier  },
+--      typescript = { eslint, prettier },
+--      typescriptreact = { eslint, prettier },
+--    },
+--  },
+--  handlers = {
+--    ["textDocument/publishDiagnostics"] = vim.lsp.with(efm_diagnostics, lsp_diagnostic_display_config)
+--  },
+--}
 
 local isBufferJavascript = function(bufnr)
   return vim.bo[bufnr].filetype == 'javascript'
@@ -308,25 +361,33 @@ local function organize_imports()
   }
   vim.lsp.buf.execute_command(params)
 end
+
+-- Should disable temporarily Because of onederful project
 lspconfig.tsserver.setup{
   capabilities = capabilities,
-  on_attach = on_attach,
-  filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
+  on_attach = tsserver_on_attach,
+  -- filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
   handlers = {
-    root_dir = lspconfig.util.root_pattern("package.json"),
     on_new_config = function(new_config, new_root_dir)
       new_config.cmd_cwd = new_root_dir
     end,
+    -- root_dir = lspconfig.util.root_pattern("package.json"),
     ["textDocument/publishDiagnostics"] = vim.lsp.with(
       tsserver_diagnostics, lsp_diagnostic_display_config
     )
    },
+  -- Note that I previously had this in the handlers section before
+  root_dir = lspconfig.util.root_pattern("package.json"),
   commands = {
     OrganizeImports = {
       organize_imports,
       description = "Organize Imports"
     }
   },
+}
+
+lspconfig.cssmodules_ls.setup{
+  on_attach = on_attach
 }
 
 ------------------ Javascript setup
@@ -373,6 +434,30 @@ function dump(o)
    end
  end
 
+------------------ Python setup setup
+lspconfig.pylsp.setup{
+  on_attach = on_attach,
+  -- handlers = {
+  --   ["textDocument/publishDiagnostics"] = simple_diagnostic_info
+  -- }
+}
+--
+-- lspconfig.pyright.setup{}
+
+
+------------------ deno setup
+-- lspconfig.denols.setup{
+--   on_attach=on_attach
+-- }
+
+------------------ java setup
+-- lspconfig.jdtls.setup{
+--   on_attach=on_attach
+-- }
+
+----
+--
+
  --s:lua print(vim.inspect(vim.lsp.get_active_clients())
 getServerCapabilities = function()
   local table = (vim.lsp.protocol.make_client_capabilities())
@@ -418,4 +503,34 @@ function get_project_diagnostics()
   end
   vim.lsp.util.set_qflist(qflist)
 end
+
+require'lspconfig'.rust_analyzer.setup{}
+
+local configs = require 'lspconfig.configs'
+local util = require 'lspconfig.util'
+
+configs.motoko = {
+  default_config = {
+    cmd = {"/home/judemlim/.local/bin/dfx", "_language-service", "channel"},
+    filetypes = { "motoko", "mo", "gdmo"},
+    root_dir = function(fname)
+      return util.root_pattern '*.mo'(fname) or util.find_git_ancestor(fname) or util.path.dirname(fname)
+    end,
+    single_file_support = true,
+    -- settings={}
+  },
+  -- docs = {
+  --   description = [[]],
+  --   default_config = {
+  --     root_dir = [[root_pattern("dfx.json", ".git")]],
+  --   },
+  -- },
+}
+
+lspconfig.motoko.setup{}
+
+require'lspconfig'.bashls.setup{
+  on_attach = on_attach,
+}
+
 

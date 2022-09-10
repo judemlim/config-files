@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =7
+let g:netrw_dirhist_7='/home/judemlim/awayco-monorepo/admin/src/pages/Affiliate/AffiliateEdit'
+let g:netrw_dirhist_6='/home/judemlim/awayco-monorepo/admin/src/pages/Affiliate'
+let g:netrw_dirhist_5='/home/judemlim/awayco-monorepo/admin/src/pages/Affiliate/AffiliateDetail'
+let g:netrw_dirhist_4='/home/judemlim/awayco-monorepo/backend/src/common/actions/product'
+let g:netrw_dirhist_3='/home/judemlim/awayco-monorepo/client/src/modals/ProductAvailability'
+let g:netrw_dirhist_2='/home/judemlim/awayco-monorepo/backend'
+let g:netrw_dirhist_1='/home/judemlim/awayco-monorepo/backend/src/scheduler/actions/scheduler'
+let g:netrw_dirhist_0='/home/judemlim/awayco-monorepo/backend/src/scheduler/actions'
+let g:netrw_dirhist_9='/home/judemlim/awayco-monorepo/backend/src/scheduler'
+let g:netrw_dirhist_8='/home/judemlim/awayco-monorepo/backend'

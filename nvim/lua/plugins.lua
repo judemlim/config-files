@@ -6,52 +6,11 @@
 vim.cmd [[packadd cfilter]]
 
 return require("packer").startup(function(use)
-  ---- Packer can manage itself
+  ---- General ----
   use {
     "wbthomason/packer.nvim",
     log = { level = "error" },
   }
-
-  -- Close jsx tags // check if this still works
-  use { "windwp/nvim-ts-autotag" }
-
-  -- Debugger
-  use {
-    "mfussenegger/nvim-dap",
-    config = function()
-      require("config.dap").setup()
-    end,
-  }
-
-  --use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
-  use "ray-x/lsp_signature.nvim" -- check if this still work
-
-  -- Save session on close
-  use {
-    "rmagatti/auto-session",
-    config = function()
-      require("auto-session").setup {
-        auto_save_enabled = true,
-      }
-    end,
-  }
-
-  use {
-    'kyazdani42/nvim-web-devicons',
-    config = function()
-      require('config.nvim-web-devicons').setup()
-    end,
-  }
-
-  -- tree viewer (This disables Netrw!!) -- there's an option to prevent it from hijacking netrw
-  use {
-      'kyazdani42/nvim-tree.lua',
-      requires = 'kyazdani42/nvim-web-devicons',
-      config = function()
-        require('config.nvim-tree').setup()
-      end,
-  }
-
   use { "nvim-treesitter/playground" }
   use { "nvim-treesitter/nvim-treesitter-textobjects" }
   use {
@@ -61,16 +20,6 @@ return require("packer").startup(function(use)
       require("config.treesitter").setup()
     end,
   }
-
-  use { "neovim/nvim-lspconfig" }
-
-  -- typescript server somewhat lacking, so additional functionality availabile in vscode and tsserver
-  use { "jose-elias-alvarez/nvim-lsp-ts-utils" }
-
-  -- Default tree sitter parser for graphql doesn't seem to be working
-  use "jparise/vim-graphql"
-
-  -- Configurable fuzzy finder
   use {
     "nvim-telescope/telescope.nvim",
     requires = { { "nvim-lua/popup.nvim" }, { "nvim-lua/plenary.nvim" } },
@@ -78,7 +27,6 @@ return require("packer").startup(function(use)
       require("config.telescope").setup()
     end,
   }
-
   use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
   use { "nvim-telescope/telescope-dap.nvim" }
 
@@ -96,59 +44,8 @@ return require("packer").startup(function(use)
       require("config.nvim-cmp").setup()
     end,
   }
-
-  -- Improved cursor movement
-  use { 
-    "ggandor/leap.nvim",
-    config = function()
-      require('leap').set_default_keymaps()
-    end
-  }-- fix up
-
   use "tpope/vim-commentary"
-
-  -- Snippets
-  use {
-    "hrsh7th/vim-vsnip-integ",
-    requires = {
-      "hrsh7th/vim-vsnip",
-    },
-  }
-  use { "rafamadriz/friendly-snippets" }
-
-  --use 'honza/vim-snippets'
-
-  -- BEWARE: This may be slowing down my vim
-  -- use{
-  --   'L3MON4D3/LuaSnip',
-  --   config=function ()
-  --     require("config.luasnip").setup()
-  --   end
-  -- }
-
-  -- Git integration
-
-  use {
-    "tpope/vim-fugitive",
-    config = function()
-      vim.api.nvim_set_keymap("n", "<leader>gs", "<cmd>Git<CR>", {})
-      -- Note that the semicolon is mapped to colon
-      vim.api.nvim_set_keymap("n", "<leader>g<space>", ";Git ", {})
-      vim.api.nvim_set_keymap("n", "<leader>gb", "<cmd>Git blame<CR>", {})
-      -- Using diffview plugin to show differences now
-      -- vim.api.nvim_set_keymap('n', '<leader>gh', "<cmd>0Gclog<CR>", {})
-      -- vim.api.nvim_set_keymap('n', '<leader>gd', "<cmd>Gvdiffsplit<CR>", {})
-    end,
-  }
   use "tpope/vim-rhubarb"
-
-  use {
-    "junegunn/gv.vim",
-    config = function() end,
-  }
-
-  -- Pair up enclosing characters
-  -- use 'jiangmiao/auto-pairs'
   use {
     "windwp/nvim-autopairs",
     config = function()
@@ -157,16 +54,7 @@ return require("packer").startup(function(use)
       }
     end,
   }
-
-  -- Insert/replace/delete typeof brackets
   use "tpope/vim-surround"
-
-  use {
-    "akinsho/nvim-toggleterm.lua",
-    config = function()
-      require("config.toggleterm").setup()
-    end,
-  }
 
   -- Vim sugar for unix shell command
   use "tpope/vim-eunuch"
@@ -177,12 +65,77 @@ return require("packer").startup(function(use)
   -- Ability to apply repeat '.' to some commands
   use "tpope/vim-repeat"
 
-  -- very useful fuzzy finder
-  -- may not work cause I removed something
+  use "MattesGroeger/vim-bookmarks"
+
+  -- extend % to things like 'if' and 'while'
+  use { "andymass/vim-matchup", event = "VimEnter" }
+  --
+  -- Get file symbol outline
+  use "simrat39/symbols-outline.nvim"
+
+  use({
+    "lukas-reineke/indent-blankline.nvim",
+    config = function()
+      require("indent_blankline").setup {
+          -- for example, context is off by default, use this to turn it on
+          show_current_context = true,
+          show_current_context_start = true,
+      }
+    end,
+  })
+
+  use {
+    "akinsho/nvim-toggleterm.lua",
+    config = function()
+      require("config.toggleterm").setup()
+    end,
+  }
+
+  -- Fuzzy finder (could probbaly replace with telescope)
+  -- Some cammandns I like like :Commands 
   use "junegunn/fzf"
   use "junegunn/fzf.vim"
 
-  -- Ranger
+
+  use {
+    "rbgrouleff/bclose.vim",
+    config = function()
+      vim.api.nvim_set_keymap("n", "ZC", "<cmd>Bclose<CR>", {})
+    end,
+  }
+
+
+  -- add extra functionality to the quickfix list
+  use "kevinhwang91/nvim-bqf"
+
+  -- Documention generator
+  use { "kkoomen/vim-doge", run = "<cmd>call doge#install()" }
+
+  use {
+    "mhartington/formatter.nvim",
+    config = function()
+      require("config.formatter").setup()
+    end,
+  }
+
+
+  ---- Project ----
+  use {
+    "rmagatti/auto-session",
+    config = function()
+      require("auto-session").setup {
+        auto_save_enabled = true,
+      }
+    end,
+  }
+
+  use {
+      'kyazdani42/nvim-tree.lua',
+      requires = 'kyazdani42/nvim-web-devicons',
+      config = function()
+        require('config.nvim-tree').setup()
+      end,
+  }
   use {
     "francoiscabrol/ranger.vim",
     config = function()
@@ -196,57 +149,14 @@ return require("packer").startup(function(use)
     requires = "rbgrouleff/bclose.vim",
   }
 
+
+  ---- Aethetics ----
   use {
-    "rbgrouleff/bclose.vim",
+    'kyazdani42/nvim-web-devicons',
     config = function()
-      vim.api.nvim_set_keymap("n", "ZC", "<cmd>Bclose<CR>", {})
+      require('config.nvim-web-devicons').setup()
     end,
   }
-
-  --- Latex Plugins ---
-  --use 'lervag/vimtex'
-  use "Konfekt/FastFold"
-  use "matze/vim-tex-fold"
-
-  --- R ---
-  use "vim-pandoc/vim-pandoc"
-  use "vim-pandoc/vim-rmarkdown"
-  use "vim-pandoc/vim-pandoc-syntax"
-
-  -- R markdown
-  use "jalvesaq/Nvim-R"
-
-  --- Note taking and work planning ---
-  use "vimwiki/vimwiki"
-  -- use "mattn/calendar-vim"
-
-  use "itchyny/calendar.vim"
-
-  --- Intutive book marks ---
-  -- Should maybe try going back to normal bookmarks or making this more synergistic with it
-  use "MattesGroeger/vim-bookmarks"
-
-  use { "tpope/vim-dispatch", opt = true, cmd = { "Dispatch", "Make", "Focus", "Start" } }
-
-  use { "andymass/vim-matchup", event = "VimEnter" }
-
-  use {
-    "ellisonleao/gruvbox.nvim",
-    requires = { "rktjmp/lush.nvim" },
-    config = function()
-      vim.api.nvim_command "colorscheme gruvbox"
-      vim.cmd [[
-        hi DiffAdd      gui=none    guifg=NONE          guibg=#bada9f
-        hi DiffChange   gui=none    guifg=NONE          guibg=#fae8b9
-        hi DiffDelete   gui=bold    guifg=#ff8080       guibg=#ffb0b0
-        hi DiffText     gui=none    guifg=NONE          guibg=#fff18c
-        hi Visual     gui=none    guifg=NONE          guibg=#FFD580
-      ]]
-    end,
-  }
-
-  use { "jez/vim-colors-solarized" }
-
   use {
     "hoob3rt/lualine.nvim",
     event = "VimEnter",
@@ -270,56 +180,57 @@ return require("packer").startup(function(use)
       vim.api.nvim_set_keymap("n", "<leader>z", "<cmd>ZenMode<CR>", {})
     end,
   }
-
   use {
-    "mhartington/formatter.nvim",
+    "ellisonleao/gruvbox.nvim",
+    requires = { "rktjmp/lush.nvim" },
     config = function()
-      require("config.formatter").setup()
+      vim.api.nvim_command "colorscheme gruvbox"
+      vim.cmd [[
+        hi DiffAdd      gui=none    guifg=NONE          guibg=#bada9f
+        hi DiffChange   gui=none    guifg=NONE          guibg=#fae8b9
+        hi DiffDelete   gui=bold    guifg=#ff8080       guibg=#ffb0b0
+        hi DiffText     gui=none    guifg=NONE          guibg=#fff18c
+        hi Visual     gui=none    guifg=NONE          guibg=#FFD580
+      ]]
     end,
   }
 
-  use {
-    'lewis6991/gitsigns.nvim',
-    requires = {
-      'nvim-lua/plenary.nvim'
-    },
-    config = function ()
-      require("config.gitsigns").setup()
-    end
-  }
 
-  -- Documention generator
-  use { "kkoomen/vim-doge", run = "<cmd>call doge#install()" }
-
-  -- Github cli wrapper
+  ---- Lsp ----
+  use "ray-x/lsp_signature.nvim" -- check if this still work
+  use { "neovim/nvim-lspconfig" }
+  use 'mfussenegger/nvim-jdtls'
   use {
-    "pwntester/octo.nvim",
+    "jose-elias-alvarez/null-ls.nvim",
     config = function()
-      require("octo").setup()
-    end,
-    requires = {
-      "nvim-telescope/telescope.nvim",
-    },
-  }
-
-  -- Nice diff view for file history and git staging
-  use {
-    "sindrets/diffview.nvim",
-    config = function()
-      require("config.diffview").setup()
+      require('config.null-ls').setup()
     end,
   }
+  use { "williamboman/mason.nvim",
+      config = function()
+        require('mason').setup {}
+      end
+  }
 
-  -- add extra functionality to the quickfix list
-  use "kevinhwang91/nvim-bqf"
-
-  -- Uses tree sitter to identify different languages in the same file.
-  -- Useful for jsx files.
+  ---- Language Specfic ----
+  --- Typescript ---
   use "JoosepAlviste/nvim-ts-context-commentstring"
+  use { "windwp/nvim-ts-autotag" }
+  -- typescript server somewhat lacking, so additional functionality availabile in vscode and tsserver
+  use { "jose-elias-alvarez/nvim-lsp-ts-utils" }
 
-  -- Get file symbol outline
-  use "simrat39/symbols-outline.nvim"
+  --- Latex Plugins ---
+  --use 'lervag/vimtex'
+  use "Konfekt/FastFold"
+  use "matze/vim-tex-fold"
 
+  --- R ---
+  use "vim-pandoc/vim-pandoc"
+  use "vim-pandoc/vim-rmarkdown"
+  use "vim-pandoc/vim-pandoc-syntax"
+  use "jalvesaq/Nvim-R"
+
+  --- Python ---
   -- Run code withe jupyter
   use {
     "dccsillag/magma-nvim",
@@ -329,27 +240,93 @@ return require("packer").startup(function(use)
     end,
   }
 
-  -- Java lsp
-  use 'mfussenegger/nvim-jdtls'
-
+  ---- Debugger ----
   use {
-    "jose-elias-alvarez/null-ls.nvim",
+    "mfussenegger/nvim-dap",
     config = function()
-      require('config.null-ls').setup()
+      require("config.dap").setup()
+    end,
+  }
+  --use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
+
+  ---- Movement ----
+  use {
+    "ggandor/leap.nvim",
+    config = function()
+      require('leap').set_default_keymaps()
+    end
+  }
+
+
+  ---- Snippets ----
+  use {
+    "hrsh7th/vim-vsnip-integ",
+    requires = {
+      "hrsh7th/vim-vsnip",
+    },
+  }
+  use { "rafamadriz/friendly-snippets" }
+
+  --use 'honza/vim-snippets'
+
+  -- BEWARE: This may be slowing down my vim
+  -- use{
+  --   'L3MON4D3/LuaSnip',
+  --   config=function ()
+  --     require("config.luasnip").setup()
+  --   end
+  -- }
+
+  ---- Git integration ----
+  use {
+    "tpope/vim-fugitive",
+    config = function()
+      vim.api.nvim_set_keymap("n", "<leader>gs", "<cmd>Git<CR>", {})
+      -- Note that the semicolon is mapped to colon
+      vim.api.nvim_set_keymap("n", "<leader>g<space>", ";Git ", {})
+      vim.api.nvim_set_keymap("n", "<leader>gb", "<cmd>Git blame<CR>", {})
+      -- Using diffview plugin to show differences now
+      -- vim.api.nvim_set_keymap('n', '<leader>gh', "<cmd>0Gclog<CR>", {})
+      -- vim.api.nvim_set_keymap('n', '<leader>gd', "<cmd>Gvdiffsplit<CR>", {})
+    end,
+  }
+  use {
+    "pwntester/octo.nvim",
+    config = function()
+      require("octo").setup()
+    end,
+    requires = {
+      "nvim-telescope/telescope.nvim",
+    },
+  }
+  use {
+    "sindrets/diffview.nvim",
+    config = function()
+      require("config.diffview").setup()
     end,
   }
 
-  use({
-    "lukas-reineke/indent-blankline.nvim",
-    config = function()
-      require("indent_blankline").setup {
-          -- for example, context is off by default, use this to turn it on
-          show_current_context = true,
-          show_current_context_start = true,
-      }
-    end,
-  })
+  use {
+    "junegunn/gv.vim",
+    config = function() end,
+  }
 
+  use {
+
+    'lewis6991/gitsigns.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim'
+    },
+    config = function ()
+      require("config.gitsigns").setup()
+    end
+  }
+
+
+
+  ---- Note taking and work planning ----
+  use "vimwiki/vimwiki"
+  -- use "mattn/calendar-vim"
   use {
       "nvim-neorg/neorg",
       -- tag = "latest",
@@ -360,10 +337,8 @@ return require("packer").startup(function(use)
       end
   }
 
-  use { "williamboman/mason.nvim",
-      config = function()
-        require('mason').setup {}
-      end
-  }
+  use "itchyny/calendar.vim"
+
+
 
 end)

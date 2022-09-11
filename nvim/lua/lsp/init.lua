@@ -159,7 +159,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   -- Use telescope instead
   --buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<Cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-space>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
@@ -172,11 +172,11 @@ local on_attach = function(client, bufnr)
   -- Use telescope instead once I learn how to add to quickfix list
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 
-  buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
   -- Jump to diagnostic and save into jumplist
   buf_set_keymap('n', '<C-p>', '<cmd>lua vim.diagnostic.goto_prev()<CR><cmd> normal m\'<CR>', opts)
   buf_set_keymap('n', '<C-n>', '<cmd>lua vim.diagnostic.goto_next()<CR><cmd> normal m\'<CR>', opts)
-  buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<leader>q', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
   --buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts) -- let plugin handle basic formatting for now
 
   buf_set_keymap('n', 'gd', "<cmd>Telescope lsp_definitions<CR>", {})
@@ -529,6 +529,7 @@ configs.motoko = {
 
 lspconfig.motoko.setup{}
 
+-- Why isn't this working?
 require'lspconfig'.bashls.setup{
   on_attach = on_attach,
 }

@@ -39,22 +39,7 @@ return require("packer").startup(function(use)
   use {
     'kyazdani42/nvim-web-devicons',
     config = function()
-      require'nvim-web-devicons'.setup {
-       -- your personnal icons can go here (to override)
-       -- you can specify color or cterm_color instead of specifying both of them
-       -- DevIcon will be appended to `name`
-       override = {
-        zsh = {
-          icon = "",
-          color = "#428850",
-          cterm_color = "65",
-          name = "Zsh"
-        }
-       };
-       -- globally enable default icons (default to false)
-       -- will get overriden by `get_icons` option
-       default = true;
-      }
+      require('config.nvim-web-devicons').setup()
     end,
   }
 
@@ -63,27 +48,9 @@ return require("packer").startup(function(use)
       'kyazdani42/nvim-tree.lua',
       requires = 'kyazdani42/nvim-web-devicons',
       config = function()
-        require("nvim-tree").setup({
-          sort_by = "case_sensitive",
-          view = {
-            adaptive_size = true,
-            mappings = {
-              list = {
-                { key = "u", action = "dir_up" },
-              },
-            },
-          },
-          renderer = {
-            group_empty = true,
-          },
-          filters = {
-            dotfiles = true,
-          },
-        })
+        require('config.nvim-tree').setup()
       end,
   }
-  --use 'brooth/far.vim'
-  --
 
   use { "nvim-treesitter/playground" }
   use { "nvim-treesitter/nvim-treesitter-textobjects" }
@@ -126,67 +93,17 @@ return require("packer").startup(function(use)
       "hrsh7th/cmp-nvim-lua",
     },
     config = function()
-      local cmp = require "cmp"
-      vim.o.completeopt = "menuone,noselect"
-      cmp.setup {
-        snippet = {
-          expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body)
-          end,
-          -- expand = function(args)
-          --   require('luasnip').lsp_expand(args.body)
-          -- end,
-        },
-        mapping = {
-          ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-f>"] = cmp.mapping.scroll_docs(4),
-          ["<C-Space>"] = cmp.mapping.complete(),
-          ["<C-e>"] = cmp.mapping.close(),
-          ["<CR>"] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
-          },
-          ["<Tab>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "s" }),
-        },
-        sources = {
-          { name = "nvim_lsp" },
-          { name = "nvim_lua" },
-          { name = "buffer" },
-          { name = "path" },
-          { name = "vsnip" },
-          -- { name = 'luasnip' },
-        },
-      }
-      vim.cmd [[
-        " NOTE: You can use other key to expand snippet.
-
-        " Expand
-        imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-        smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-
-        " Expand or jump
-        imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-        smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-
-        " Jump forward or backward
-        imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-        smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-        imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-        smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-
-        " Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
-        " See https://github.com/hrsh7th/vim-vsnip/pull/50
-        " nmap        s   <Plug>(vsnip-select-text)
-        " xmap        s   <Plug>(vsnip-select-text)
-        " nmap        S   <Plug>(vsnip-cut-text)
-        " xmap        S   <Plug>(vsnip-cut-text)
-      ]]
-
+      require("config.nvim-cmp").setup()
     end,
   }
 
   -- Improved cursor movement
-  use "ggandor/lightspeed.nvim" -- fix up
+  use { 
+    "ggandor/leap.nvim",
+    config = function()
+      require('leap').set_default_keymaps()
+    end
+  }-- fix up
 
   use "tpope/vim-commentary"
 
@@ -286,9 +203,6 @@ return require("packer").startup(function(use)
     end,
   }
 
-  -- Bracket colors
-  -- use "p00f/nvim-ts-rainbow"
-
   --- Latex Plugins ---
   --use 'lervag/vimtex'
   use "Konfekt/FastFold"
@@ -301,10 +215,6 @@ return require("packer").startup(function(use)
 
   -- R markdown
   use "jalvesaq/Nvim-R"
-
-  --- CMake ---
-  -- Not sure if I need this anymore
-  use "pboettch/vim-cmake-syntax"
 
   --- Note taking and work planning ---
   use "vimwiki/vimwiki"
@@ -319,8 +229,6 @@ return require("packer").startup(function(use)
   use { "tpope/vim-dispatch", opt = true, cmd = { "Dispatch", "Make", "Focus", "Start" } }
 
   use { "andymass/vim-matchup", event = "VimEnter" }
-
-  use { "dracula/vim", as = "dracula" }
 
   use {
     "ellisonleao/gruvbox.nvim",
@@ -362,37 +270,6 @@ return require("packer").startup(function(use)
       vim.api.nvim_set_keymap("n", "<leader>z", "<cmd>ZenMode<CR>", {})
     end,
   }
-  -- Lua
-  -- use {
-  --   "folke/trouble.nvim",
-  --   requires = "kyazdani42/nvim-web-devicons",
-  --   config = function()
-  --     require("trouble").setup {
-  --       -- your configuration comes here
-  --       -- or leave it empty to use the default settings
-  --       -- refer to the configuration section below
-  --     }
-  --     vim.api.nvim_set_keymap("n", "<leader>xx", "<cmd>Trouble<cr>", { silent = true, noremap = true })
-  --     vim.api.nvim_set_keymap(
-  --       "n",
-  --       "<leader>xw",
-  --       "<cmd>Trouble lsp_workspace_diagnostics<cr>",
-  --       { silent = true, noremap = true }
-  --     )
-  --     vim.api.nvim_set_keymap(
-  --       "n",
-  --       "<leader>xd",
-  --       "<cmd>Trouble lsp_document_diagnostics<cr>",
-  --       { silent = true, noremap = true }
-  --     )
-  --     vim.api.nvim_set_keymap("n", "<leader>xl", "<cmd>Trouble loclist<cr>", { silent = true, noremap = true })
-  --     vim.api.nvim_set_keymap("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", { silent = true, noremap = true })
-  --     vim.api.nvim_set_keymap("n", "gR", "<cmd>Trouble lsp_references<cr>", { silent = true, noremap = true })
-  --   end,
-  -- }
-
-  -- colour virtual text from diagnostics
-  -- use 'folke/lsp-colors.nvim'
 
   use {
     "mhartington/formatter.nvim",
@@ -401,40 +278,15 @@ return require("packer").startup(function(use)
     end,
   }
 
-  -- use {
-  --   'lewis6991/gitsigns.nvim',
-  --   requires = {
-  --     'nvim-lua/plenary.nvim'
-  --   },
-  --   config = function ()
-  --     require("config.gitsigns").setup()
-  --   end
-  -- }
-
   use {
-    "airblade/vim-gitgutter",
-    config = "vim.cmd[[set updatetime=1000]]",
+    'lewis6991/gitsigns.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim'
+    },
+    config = function ()
+      require("config.gitsigns").setup()
+    end
   }
-
-  use {
-    "vim-test/vim-test",
-    config = function()
-      vim.cmd [[
-      let g:test#javascript#runner = "mocha"
-      let g:test#javascript#mocha#options = '--colors --recursive --timeout 0 --check-leaks --require source-map-support/register --globals database,models --require dist/common/test/init '
-      let g:test#javascript#mocha#executable = 'make compile && npx mocha'
-      let g:test#javascript#mocha#file_pattern = '.*'
-      let test#project_root = "~/awayco-monorepo/backend"
-      let test#strategy = "neovim"
-      let g:test#runner_commands = ['Mocha']
-      let g:test#preserve_screen = 1
-      ]]
-    end,
-  }
-
-  -- Trying to get testing working for mocha
-  -- let g:test#javascript#mocha#executable = 'npx mocha --colors --recursive --timeout 0 --check-leaks --require source-map-support/register --globals database,models --require dist/common/test/init --exit ./dist/common/test'
-  -- use { "rcarriga/vim-ultest", requires = {"vim-test/vim-test"}, run = ":UpdateRemotePlugins" }
 
   -- Documention generator
   use { "kkoomen/vim-doge", run = "<cmd>call doge#install()" }
@@ -459,49 +311,31 @@ return require("packer").startup(function(use)
   }
 
   -- add extra functionality to the quickfix list
-  use { "kevinhwang91/nvim-bqf" }
+  use "kevinhwang91/nvim-bqf"
 
   -- Uses tree sitter to identify different languages in the same file.
   -- Useful for jsx files.
   use "JoosepAlviste/nvim-ts-context-commentstring"
 
   -- Get file symbol outline
-  use { "simrat39/symbols-outline.nvim", config = function() end }
+  use "simrat39/symbols-outline.nvim"
 
   -- Run code withe jupyter
   use {
     "dccsillag/magma-nvim",
     run = ":UpdateRemotePlugins",
     config = function()
-      vim.cmd [[
-        nnoremap <silent><expr> <Leader>r  :MagmaEvaluateOperator<CR>
-        nnoremap <silent>       <Leader>rr :MagmaEvaluateLine<CR>
-        xnoremap <silent>       <Leader>r  :<C-u>MagmaEvaluateVisual<CR>
-        nnoremap <silent>       <Leader>rc :MagmaReevaluateCell<CR>
-        nnoremap <silent>       <Leader>rd :MagmaDelete<CR>
-        nnoremap <silent>       <Leader>ro :MagmaShowOutput<CR>
-        let g:magma_automatically_open_output = v:true
-      ]]
+      require('config.magma').setup()
     end,
   }
 
   -- Java lsp
   use 'mfussenegger/nvim-jdtls'
 
-  -- Use Neovim as a language server to inject LSP diagnostics, code actions, and more via Lua.
-
   use {
     "jose-elias-alvarez/null-ls.nvim",
     config = function()
-      require("null-ls").setup({
-        sources = {
-            require("null-ls").builtins.formatting.stylua,
-            require("null-ls").builtins.formatting.eslint,
-            require("null-ls").builtins.diagnostics.eslint,
-            -- require("null-ls").builtins.completion.spell,
-            require("null-ls").builtins.code_actions.eslint, -- Why not working?
-        },
-      })
+      require('config.null-ls').setup()
     end,
   }
 
@@ -522,11 +356,7 @@ return require("packer").startup(function(use)
       -- ft = "norg",
       -- after = "nvim-treesitter", -- You may want to specify Telescope here as well
       config = function()
-        require('neorg').setup {
-            load = {
-                ["core.defaults"] = {}
-            }
-        }
+        require('config.neorg').setup()
       end
   }
 
@@ -535,6 +365,5 @@ return require("packer").startup(function(use)
         require('mason').setup {}
       end
   }
-
 
 end)

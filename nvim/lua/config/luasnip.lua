@@ -1,7 +1,7 @@
 local M = {}
 
 function M.setup()
-  local status_ok, actions = pcall(require, "luasnip")
+  local status_ok, _ = pcall(require, "luasnip")
   if not status_ok then
     -- TODO Better error handling
     print("Error loading luasnip")

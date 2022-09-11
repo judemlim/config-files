@@ -204,7 +204,7 @@ return require("packer").startup(function(use)
     "jose-elias-alvarez/null-ls.nvim",
     config = function()
       require('config.null-ls').setup()
-    end,
+    end
   }
   use { "williamboman/mason.nvim",
       config = function()
@@ -215,9 +215,14 @@ return require("packer").startup(function(use)
   ---- Language Specfic ----
   --- Typescript ---
   use "JoosepAlviste/nvim-ts-context-commentstring"
-  use { "windwp/nvim-ts-autotag" }
+  use { "windwp/nvim-ts-autotag",
+    config = function()
+      require('nvim-ts-autotag').setup()
+    end
+  }
   -- typescript server somewhat lacking, so additional functionality availabile in vscode and tsserver
   use { "jose-elias-alvarez/nvim-lsp-ts-utils" }
+  use({ "jose-elias-alvarez/typescript.nvim", module = "typescript" })
 
   --- Latex Plugins ---
   --use 'lervag/vimtex'

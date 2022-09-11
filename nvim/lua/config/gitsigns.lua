@@ -1,7 +1,7 @@
 local M = {}
 
 function M.setup()
-  local status_ok, actions = pcall(require, "gitsigns")
+  local status_ok, _ = pcall(require, "gitsigns")
   if not status_ok then
     -- TODO Better error handling
     print("Error loading gitsigns")
@@ -18,27 +18,27 @@ function M.setup()
     numhl = false,
     linehl = false,
     -- Keymaps not attcheing to already open buffers in a session
-    --keymaps = {
-    ---- Default keymap options
-    --noremap = true,
-    ----buffer = true,
+    keymaps = {
+    -- Default keymap options
+    noremap = true,
+    --buffer = true,
 
-    --['n ]c'] = { expr = true, "&diff ? ']c' : '<cmd>lua require\"gitsigns.actions\".next_hunk()<CR>'"},
-    --['n [c'] = { expr = true, "&diff ? '[c' : '<cmd>lua require\"gitsigns.actions\".prev_hunk()<CR>'"},
+    ['n ]c'] = { expr = true, "&diff ? ']c' : '<cmd>lua require\"gitsigns.actions\".next_hunk()<CR>'"},
+    ['n [c'] = { expr = true, "&diff ? '[c' : '<cmd>lua require\"gitsigns.actions\".prev_hunk()<CR>'"},
 
-    --['n <leader>hs'] = '<cmd>lua require"gitsigns".stage_hunk()<CR>',
-    --['v <leader>hs'] = '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
-    --['n <leader>hu'] = '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>',
-    --['n <leader>hr'] = '<cmd>lua require"gitsigns".reset_hunk()<CR>',
-    --['v <leader>hr'] = '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
-    --['n <leader>hR'] = '<cmd>lua require"gitsigns".reset_buffer()<CR>',
-    --['n <leader>hp'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
-    --['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line(true)<CR>',
+    ['n <leader>hs'] = '<cmd>lua require"gitsigns".stage_hunk()<CR>',
+    ['v <leader>hs'] = '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
+    ['n <leader>hu'] = '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>',
+    ['n <leader>hr'] = '<cmd>lua require"gitsigns".reset_hunk()<CR>',
+    ['v <leader>hr'] = '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
+    ['n <leader>hR'] = '<cmd>lua require"gitsigns".reset_buffer()<CR>',
+    ['n <leader>hp'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
+    ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line(true)<CR>',
 
-    ---- Text objects
-    --['o ih'] = ':<C-U>lua require"gitsigns.actions".select_hunk()<CR>',
-    --['x ih'] = ':<C-U>lua require"gitsigns.actions".select_hunk()<CR>'
-    --},
+    -- Text objects
+    ['o ih'] = ':<C-U>lua require"gitsigns.actions".select_hunk()<CR>',
+    ['x ih'] = ':<C-U>lua require"gitsigns.actions".select_hunk()<CR>'
+    },
     watch_index = {
       interval = 1000,
       follow_files = true
@@ -54,17 +54,6 @@ function M.setup()
     status_formatter = nil, -- Use default
     word_diff = false,
   }
-
-  vim.api.nvim_set_keymap('n', '<leader>hs', '<cmd>lua require"gitsigns".stage_hunk()<CR>', { expr = true })
-  vim.api.nvim_set_keymap('v', '<leader>hs', '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>', { expr = true })
-  vim.api.nvim_set_keymap('n', '<leader>hu', '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>', { expr = true })
-  vim.api.nvim_set_keymap('n', '<leader>hr', '<cmd>lua require"gitsigns".reset_hunk()<CR>', { expr = true })
-  vim.api.nvim_set_keymap('v', '<leader>hr', '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>', { expr = true })
-  vim.api.nvim_set_keymap('n', '<leader>hR', '<cmd>lua require"gitsigns".reset_buffer()<CR>', { expr = true })
-  vim.api.nvim_set_keymap('n', '<leader>hp', '<cmd>lua require"gitsigns".preview_hunk()<CR>', { expr = true })
-  vim.api.nvim_set_keymap('n', '<leader>hb', '<cmd>lua require"gitsigns".blame_line(true)<CR', { expr = true })
-  vim.api.nvim_set_keymap('n', ']c', '<cmd>lua require\"gitsigns.actions\".next_hunk()<CR>', { expr = true })
-  vim.api.nvim_set_keymap('n', '[c', '<cmd>lua require\"gitsigns.actions\".prev_hunk()<CR>', { expr = true })
 
 end
 

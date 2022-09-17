@@ -91,31 +91,6 @@ function M.setup()
     {}
   )
   vim.api.nvim_set_keymap("n", ",lg", "<cmd>lua require'telescope.builtin'.live_grep()<CR>", {})
-  -- vim.api.nvim_set_keymap('n', ',lg', "<cmd>lua require'telescope.builtin'.live_grep(require('telescope.themes').get_dropdown({}))<CR>", {})
-  vim.api.nvim_set_keymap(
-    "n",
-    ",la",
-    "<cmd>lua require('telescope.builtin').live_grep({ prompt_title = 'Searching in Admin', search_dirs={'~/awayco-monorepo/admin/src/'}})<CR>",
-    {}
-  )
-  vim.api.nvim_set_keymap(
-    "n",
-    ",lc",
-    "<cmd>lua require('telescope.builtin').live_grep({ prompt_title = 'Searching in Client', search_dirs={'~/awayco-monorepo/client/src/'}})<CR>",
-    {}
-  )
-  vim.api.nvim_set_keymap(
-    "n",
-    ",lb",
-    "<cmd>lua require('telescope.builtin').live_grep({ prompt_title = 'Searching in Backend', search_dirs={'~/awayco-monorepo/backend/src/'}})<CR>",
-    {}
-  )
-  vim.api.nvim_set_keymap(
-    "n",
-    ",ls",
-    "<cmd>lua require('telescope.builtin').live_grep({ prompt_title = 'Searching in Shop', search_dirs={'~/awayco-monorepo/shop/src/'}})<CR>",
-    {}
-  )
   vim.api.nvim_set_keymap("n", ",s", "<cmd>Telescope lsp_document_symbols<CR>", {})
   vim.api.nvim_set_keymap("n", ",S", "<cmd>Telescope lsp_workspace_symbols query=", {})
   --vim.api.nvim_set_keymap('n', ',rS', "<cmd>Telescope lsp_workspace_symbols query=<c-r><c-w><CR>", {})

@@ -39,6 +39,7 @@ return require("packer").startup(function(use)
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-nvim-lua",
+      "saadparwaiz1/cmp_luasnip",
     },
     config = function()
       require("config.nvim-cmp").setup()
@@ -71,19 +72,25 @@ return require("packer").startup(function(use)
   use { "andymass/vim-matchup", event = "VimEnter" }
   --
   -- Get file symbol outline
-  use "simrat39/symbols-outline.nvim"
+  use 
+   { "simrat39/symbols-outline.nvim",
+    config = function()
+      require("symbols-outline").setup()
+    end,
+  }
 
-  use({
+  use{
     "lukas-reineke/indent-blankline.nvim",
     config = function()
       require("indent_blankline").setup {
-          -- for example, context is off by default, use this to turn it on
-          show_current_context = true,
-          show_current_context_start = true,
+        -- for example, context is off by default, use this to turn it on
+        show_current_context = true,
+        show_current_context_start = true,
       }
     end,
-  })
+  }
 
+  -- Terminals
   use {
     "akinsho/nvim-toggleterm.lua",
     config = function()
@@ -91,12 +98,7 @@ return require("packer").startup(function(use)
     end,
   }
 
-  -- Fuzzy finder (could probbaly replace with telescope)
-  -- Some cammandns I like like :Commands 
-  use "junegunn/fzf"
-  use "junegunn/fzf.vim"
-
-
+  -- Easy buffer wipe (I think this is the right word for it)
   use {
     "rbgrouleff/bclose.vim",
     config = function()
@@ -111,6 +113,7 @@ return require("packer").startup(function(use)
   -- Documention generator
   use { "kkoomen/vim-doge", run = "<cmd>call doge#install()" }
 
+  -- Think about deleteing this
   use {
     "mhartington/formatter.nvim",
     config = function()
@@ -118,9 +121,30 @@ return require("packer").startup(function(use)
     end,
   }
 
+  -- prettier asynchrounous notifications
+  use {
+    'rcarriga/nvim-notify',
+    config = function ()
+      vim.api.nvim_set_keymap("n", "<backspace>n", "<cmd>lua require('notify').dismiss()<CR>", {})
+    end
+  }
+
+  -- Pomodorro timer
+  use {
+      'wthollingsworth/pomodoro.nvim',
+      requires = 'MunifTanjim/nui.nvim',
+      config = function()
+          require('pomodoro').setup({
+              time_work = 25,
+              time_break_short = 5,
+              time_break_long = 20,
+              timers_to_long_break = 4
+          })
+      end
+  }
 
   ---- Project ----
-  use {
+  use { -- Think about replacing this with Folke's (a bit buggy)
     "rmagatti/auto-session",
     config = function()
       require("auto-session").setup {
@@ -162,29 +186,42 @@ return require("packer").startup(function(use)
     event = "VimEnter",
     -- config = [[require('config.lualine')]],
     config = function()
-      require("lualine").setup {
-        options = { theme = "gruvbox_light" },
-      }
+      require("lualine").setup {}
+      -- require("lualine").setup { options = { theme = "auto" }, }
     end,
     wants = "nvim-web-devicons",
   }
 
-  use {
-    "folke/zen-mode.nvim",
-    config = function()
-      require("zen-mode").setup {
-        -- your configuration comes here
-        -- or leave it empty to use the default settings
-        -- refer to the configuration section below
-      }
-      vim.api.nvim_set_keymap("n", "<leader>z", "<cmd>ZenMode<CR>", {})
-    end,
-  }
+   use {
+     "folke/zen-mode.nvim",
+     config = function()
+       require("zen-mode").setup {
+         -- your configuration comes here
+         -- or leave it empty to use the default settings
+         -- refer to the configuration section below
+       }
+       vim.api.nvim_set_keymap("n", "<leader>z", "<cmd>ZenMode<CR>", {})
+     end,
+   }
+   
   use {
     "ellisonleao/gruvbox.nvim",
     requires = { "rktjmp/lush.nvim" },
     config = function()
-      vim.api.nvim_command "colorscheme gruvbox"
+      require("gruvbox").setup({
+        undercurl = true,
+        underline = true,
+        bold = true,
+        italic = true,
+        strikethrough = true,
+        invert_selection = false,
+        invert_signs = false,
+        invert_tabline = false,
+        invert_intend_guides = false,
+        inverse = true, -- invert background for search, diffs, statuslines and errors
+        contrast = "", -- can be "hard", "soft" or empty string
+        overrides = {},
+      })
       vim.cmd [[
         hi DiffAdd      gui=none    guifg=NONE          guibg=#bada9f
         hi DiffChange   gui=none    guifg=NONE          guibg=#fae8b9
@@ -222,12 +259,12 @@ return require("packer").startup(function(use)
   }
   -- typescript server somewhat lacking, so additional functionality availabile in vscode and tsserver
   use { "jose-elias-alvarez/nvim-lsp-ts-utils" }
-  use({ "jose-elias-alvarez/typescript.nvim", module = "typescript" })
+  use { "jose-elias-alvarez/typescript.nvim" }
 
   --- Latex Plugins ---
   --use 'lervag/vimtex'
   use "Konfekt/FastFold"
-  use "matze/vim-tex-fold"
+  -- use "matze/vim-tex-fold"
 
   --- R ---
   use "vim-pandoc/vim-pandoc"
@@ -264,23 +301,26 @@ return require("packer").startup(function(use)
 
 
   ---- Snippets ----
-  use {
-    "hrsh7th/vim-vsnip-integ",
-    requires = {
-      "hrsh7th/vim-vsnip",
-    },
-  }
-  use { "rafamadriz/friendly-snippets" }
+  -- use {
+  --   "hrsh7th/vim-vsnip-integ",
+  --   requires = {
+  --     "hrsh7th/vim-vsnip",
+  --   },
+  -- }
+  -- use { "rafamadriz/friendly-snippets" }
 
-  --use 'honza/vim-snippets'
+  -- use 'honza/vim-snippets'
 
   -- BEWARE: This may be slowing down my vim
-  -- use{
-  --   'L3MON4D3/LuaSnip',
-  --   config=function ()
-  --     require("config.luasnip").setup()
-  --   end
-  -- }
+  use{
+    'L3MON4D3/LuaSnip',
+    config=function ()
+      require("config.luasnip").setup()
+    end,
+    requires = {
+      "rafamadriz/friendly-snippets",
+    }
+  }
 
   ---- Git integration ----
   use {
@@ -329,7 +369,7 @@ return require("packer").startup(function(use)
 
 
 
-  ---- Note taking and work planning ----
+  ---- Note taking ----
   use "vimwiki/vimwiki"
   -- use "mattn/calendar-vim"
   use {
@@ -339,11 +379,20 @@ return require("packer").startup(function(use)
       -- after = "nvim-treesitter", -- You may want to specify Telescope here as well
       config = function()
         require('config.neorg').setup()
-      end
+      end,
+      requires = "nvim-neorg/neorg-telescope"
   }
 
-  use "itchyny/calendar.vim"
-
-
+  ---- Calendar ----
+  use {
+    "itchyny/calendar.vim",
+    config = function()
+      vim.cmd([[
+        source ~/.cache/calendar.vim/credentials.vim
+        let g:calendar_google_calendar = 1
+      ]])
+    end
+  }
 
 end)
+

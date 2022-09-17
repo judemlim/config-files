@@ -13,6 +13,7 @@ local servers = {
   cssls = {},
   dockerls = {},
   tsserver = {},
+  -- motoko = {},
   -- eslint = {},
   html = {},
   -- jsonls = {
@@ -70,12 +71,17 @@ local options = {
 
 for server, opts in pairs(servers) do
   opts = vim.tbl_deep_extend("force", {}, options, opts or {})
-  require("lspconfig")[server].setup(opts)
-  -- if server == "tsserver" then
-  --     require("typescript").setup({ server = opts })
-  -- else
-  --   require("lspconfig")[server].setup(opts)
-  -- end
+  -- require("lspconfig")[server].setup(opts)
+  if server == "tsserver" then
+      require("typescript").setup({ server = opts })
+  else
+    require("lspconfig")[server].setup(opts)
+  end
+  -- If server = motoko then import the motoko module here
 end
 
--- require("config.lsp.null-ls").setup(options)
+
+-- Currently manually starting the motoko lsp
+require "lsp.motoko_manual"
+
+

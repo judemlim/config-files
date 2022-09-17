@@ -8,11 +8,12 @@ cmd "filetype plugin indent on"
 
 -- Colorscheme
 vim.o.termguicolors = true
--- vim.api.nvim_command('colorscheme gruvbox')
+vim.api.nvim_command('colorscheme gruvbox')
 vim.o.bg = 'light'
 
 -- Settings
 vim.g.mapleader = ' '
+
 --opt.clipboard = "unnamedplus" -- allows neovim to access the system clipboard -- issues with gitSigns preview hunk
 opt.cmdheight = 2 -- more space in the neovim command line for displaying messages
 opt.title = true
@@ -47,12 +48,12 @@ vim.api.nvim_set_keymap("v", ":", ";", { silent = true, noremap = true })
 -- vim.api.nvim_set_keymap("n", "<C-s>", "<cmd>w<CR>", { silent = true }) -- save like everywhere else in the world
 vim.api.nvim_set_keymap("n", "<backspace>o", [[<cmd>only<CR>]], { silent = true })
 vim.api.nvim_set_keymap("n", "<backspace>t", [[<cmd>tabonly<CR>]], { silent = true })
+vim.api.nvim_set_keymap("n", "<backspace>h", "<cmd>noh<CR>", { silent = true })
 
 -- New buffer management
-vim.api.nvim_set_keymap("n", "<leader>n", "<cmd>noh<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<leader>v", "<cmd>vsp<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<leader>s", "<cmd>sp<CR>", { silent = true })
-vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>tabnew<CR>", { silent = true })
+-- vim.api.nvim_set_keymap("n", "<leader>v", "<cmd>vsp<CR>", { silent = true })
+-- vim.api.nvim_set_keymap("n", "<leader>s", "<cmd>sp<CR>", { silent = true })
+-- vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>tabnew<CR>", { silent = true })
 
 -- better window movement
 vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { silent = true })

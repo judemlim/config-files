@@ -10,30 +10,41 @@ function M.setup()
   require('neorg').setup {
     load = {
       ["core.defaults"] = {},
-      ["core.norg.journal"] = {
+      ["core.journal"] = {
         config = {
-          workspace = "home",
+          workspace = "neorg",
           strategy = "nested"
         }
       },
-      ["core.norg.manoeuvre"] = {},
-      -- ["core.gtd.base"] = {},
-      ["core.norg.qol.toc"] = {},
-      ["core.norg.concealer"] = {},
-      ["core.integrations.telescope"] = {},
-      ["core.norg.completion"] = {
+      ["core.manoeuvre"] = {},
+      -- ["core.gtd.base"] = {
+      --   config = {
+      --     workspace = "gtd"
+      --   }
+      -- },
+      ["core.qol.toc"] = {},
+      ["core.concealer"] = {},
+      -- ["core.integrations.telescope"] = {},
+      ["core.completion"] = {
         config = { engine = "nvim-cmp" },
       },
       ["core.integrations.nvim-cmp"] = {},
-      ["core.norg.dirman"] = {
+      ["core.dirman"] = {
         config = {
             workspaces = {
-              home  = "~/neorg/home", -- Format: <name_of_workspace> = <path_to_workspace_root>
-              work  = "~/neorg/work", -- Format: <name_of_workspace> = <path_to_workspace_root>
-              uni  = "~/neorg/uni", -- Format: <name_of_workspace> = <path_to_workspace_root>
-              knowledge_base  = "~/neorg/knowledge_base", -- Format: <name_of_workspace> = <path_to_workspace_root>
+              neorg = "~/neorg",
+              tech  = "~/neorg/tech",
+              exercise  = "~/neorg/exercise",
+              health  = "~/neorg/health",
+              music  = "~/neorg/music",
+              gtd  = "~/neorg/gtd",
+              languages  = "~/neorg/language",
+              finance  = "~/neorg/finance",
+              projects  = "~/neorg/projects",
+              productivity  = "~/neorg/productivity",
+              work  = "~/neorg/work",
             },
-            autochdir = false, -- Automatically change the directory to the current workspace's root every time
+            autochdir = true, -- Automatically change the directory to the current workspace's root every time
             index = "index.norg", -- The name of the main () .norg file
         }
       }
@@ -46,11 +57,15 @@ function M.setup()
   vim.api.nvim_set_keymap('n', '<leader>nt', '<cmd>Neorg journal today<CR>', {silent = true, noremap = true})
   vim.api.nvim_set_keymap('n', '<leader>nm', '<cmd>Neorg journal tomorrow<CR>', {silent = true, noremap = true})
 
-  vim.api.nvim_set_keymap('n', '<leader>nw', '<cmd>Neorg workspace work<CR>', {silent = true, noremap = true})
-  vim.api.nvim_set_keymap('n', '<leader>nh', '<cmd>Neorg workspace home<CR>', {silent = true, noremap = true})
-  vim.api.nvim_set_keymap('n', '<leader>nk', '<cmd>Neorg workspace knowledge_base<CR>', {silent = true, noremap = true})
+  -- vim.api.nvim_set_keymap('n', '<leader>nw', '<cmd>Neorg workspace work<CR>', {silent = true, noremap = true})
+  -- vim.api.nvim_set_keymap('n', '<leader>nh', '<cmd>Neorg workspace home<CR>', {silent = true, noremap = true})
+  vim.api.nvim_set_keymap('n', '<leader>nn', '<cmd>Telescope neorg switch_workspace<CR>', {})
 
   vim.api.nvim_set_keymap('n', '<leader>nfl', '<cmd>Telescope neorg insert_file_link<CR>', {silent = true, noremap = true})
+
+  -- Example of how to configure call dirman (and other modules)
+  -- require("neorg.modules.core.norg.dirman.module").public.get_norg_files("tech")
+ -- require("neorg.modules.core.norg.dirman.module").public.get_workspace_names()
 
 end
 

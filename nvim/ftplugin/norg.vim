@@ -1,4 +1,4 @@
-" set tw=80
+" set tw=100
 set relativenumber
 setlocal spell
 noremap Q gqip

@@ -72,8 +72,7 @@ return require("packer").startup(function(use)
   use { "andymass/vim-matchup", event = "VimEnter" }
   --
   -- Get file symbol outline
-  use 
-   { "simrat39/symbols-outline.nvim",
+  use { "simrat39/symbols-outline.nvim",
     config = function()
       require("symbols-outline").setup()
     end,
@@ -111,7 +110,7 @@ return require("packer").startup(function(use)
   use "kevinhwang91/nvim-bqf"
 
   -- Documention generator
-  use { "kkoomen/vim-doge", run = "<cmd>call doge#install()" }
+  -- use { "kkoomen/vim-doge", run = "<cmd>call doge#install()" }
 
   -- Think about deleteing this
   use {
@@ -135,10 +134,10 @@ return require("packer").startup(function(use)
       requires = 'MunifTanjim/nui.nvim',
       config = function()
           require('pomodoro').setup({
-              time_work = 25,
+              time_work = 55,
               time_break_short = 5,
               time_break_long = 20,
-              timers_to_long_break = 4
+              timers_to_long_break = 3
           })
       end
   }
@@ -164,9 +163,9 @@ return require("packer").startup(function(use)
     "francoiscabrol/ranger.vim",
     config = function()
       vim.cmd [[
-      let g:ranger_map_keys = 0
-      let g:no_plugin_maps = 1
-      let g:ranger_replace_netrw = 1
+        let g:ranger_map_keys = 0
+        let g:no_plugin_maps = 1
+        let g:ranger_replace_netrw = 1
       ]]
       vim.api.nvim_set_keymap("n", "-", "<cmd>Ranger<CR>", {})
     end,
@@ -174,7 +173,7 @@ return require("packer").startup(function(use)
   }
 
 
-  ---- Aethetics ----
+  ---- Aesthetics ----
   use {
     'kyazdani42/nvim-web-devicons',
     config = function()
@@ -192,7 +191,7 @@ return require("packer").startup(function(use)
     wants = "nvim-web-devicons",
   }
 
-   use {
+  use {
      "folke/zen-mode.nvim",
      config = function()
        require("zen-mode").setup {
@@ -200,10 +199,10 @@ return require("packer").startup(function(use)
          -- or leave it empty to use the default settings
          -- refer to the configuration section below
        }
-       vim.api.nvim_set_keymap("n", "<leader>z", "<cmd>ZenMode<CR>", {})
+       vim.api.nvim_set_keymap("n", "leaderz", "<cmd>ZenMode<CR>", {})
      end,
-   }
-   
+  }
+
   use {
     "ellisonleao/gruvbox.nvim",
     requires = { "rktjmp/lush.nvim" },
@@ -232,6 +231,17 @@ return require("packer").startup(function(use)
     end,
   }
 
+  -- use {'akinsho/bufferline.nvim',
+  --   tag = "v3.*",
+  --   requires = 'kyazdani42/nvim-web-devicons',
+  --   config=function ()
+  --     require("bufferline").setup({
+  --       options = {
+  --         mode = "tabs"
+  --       }
+  --     })
+  --   end
+  -- }
 
   ---- Lsp ----
   use "ray-x/lsp_signature.nvim" -- check if this still work
@@ -372,6 +382,7 @@ return require("packer").startup(function(use)
   ---- Note taking ----
   use "vimwiki/vimwiki"
   -- use "mattn/calendar-vim"
+
   use {
       "nvim-neorg/neorg",
       -- tag = "latest",
@@ -380,7 +391,8 @@ return require("packer").startup(function(use)
       config = function()
         require('config.neorg').setup()
       end,
-      requires = "nvim-neorg/neorg-telescope"
+      requires = { { "nvim-lua/plenary.nvim" }, { "nvim-neorg/neorg-telescope" } },
+      run = ":Neorg sync-parsers",
   }
 
   ---- Calendar ----
@@ -395,4 +407,3 @@ return require("packer").startup(function(use)
   }
 
 end)
-

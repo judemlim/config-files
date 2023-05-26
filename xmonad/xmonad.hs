@@ -59,7 +59,7 @@ import XMonad.Util.Loggers
 ------------------------------------------------------------------------
 
 myModMask       = mod4Mask  -- Sets modkey to super/windows key
-myTerminal      = "kitty"   -- Sets default terminal
+myTerminal      = "alacritty"   -- Sets default terminal
 myBorderWidth   = 5         -- Sets border width for windows
 -- myNormalBorderColor = "#839496"
 myFocusedBorderColor = "#b1eea8"
@@ -86,7 +86,7 @@ myStartupHook = do
       spawnOnce "sleep 10 && thunderbird "  
       spawnOnce "sleep 1 && ~/.screenlayout/home.sh "  
       spawnOnce "sleep 1 && slack "  
-      spawnOnce "sleep 5 && stalonetray"  
+      spawnOnce "sleep 5 && trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --widthtype request --transparent true --tint 0x191970 --height 20 --distancefrom right"  
       spawn "xset r rate 200 25"  
 
       -- Proton startup
@@ -135,8 +135,8 @@ scratchpads :: [NamedScratchpad]
 scratchpads = [ 
     NS "terminal" spawnTerm findTerm manageTerm,
     -- first string class, second string className
-    NS "ranger" "kitty --name fileExplorer -e ranger" (resource =? "fileExplorer") manageTerm,
-    NS "plover" "kitty --name plover -e ~/plover-4.0.0.dev10-x86_64.AppImage --gui console" (resource =? "plover") ploverFloat,
+    NS "ranger" "alacritty --class fileExplorer -e ranger" (resource =? "fileExplorer") manageTerm,
+    -- NS "plover" "alacritty --name plover -e ~/plover-4.0.0.dev10-x86_64.AppImage --gui console" (resource =? "plover") ploverFloat,
     NS "bluetooth" "blueman-manager" (className =? "Blueman-manager") manageTerm,
     NS "spotify" "spotify" (className =? "Spotify") manageTerm,
     NS "todoList" "superproductivity" (className  =? "superProductivity")
@@ -146,7 +146,7 @@ scratchpads = [
           (manageTerm) 
     ]
     where
-    spawnTerm  = myTerminal ++  " --name scratchpad"
+    spawnTerm  = myTerminal ++  " --class scratchpad"
     findTerm   = resource =? "scratchpad"
     manageTerm = customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3)
     ploverFloat = customFloating $ W.RationalRect (11/13) (1/50) (1/8) (1/4)

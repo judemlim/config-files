@@ -30,6 +30,7 @@ function M.setup()
             workspaces = {
               home  = "~/neorg/home", -- Format: <name_of_workspace> = <path_to_workspace_root>
               work  = "~/neorg/work", -- Format: <name_of_workspace> = <path_to_workspace_root>
+              uni  = "~/neorg/uni", -- Format: <name_of_workspace> = <path_to_workspace_root>
               knowledge_base  = "~/neorg/knowledge_base", -- Format: <name_of_workspace> = <path_to_workspace_root>
             },
             autochdir = false, -- Automatically change the directory to the current workspace's root every time

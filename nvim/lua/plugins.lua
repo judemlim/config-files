@@ -143,12 +143,22 @@ return require("packer").startup(function(use)
   }
 
   ---- Project ----
-  use { -- Think about replacing this with Folke's (a bit buggy)
-    "rmagatti/auto-session",
+  use {
+    "folke/persistence.nvim",
+    events = "BufReadPre",
     config = function()
-      require("auto-session").setup {
-        auto_save_enabled = true,
-      }
+      require('persistence').setup({
+        dir = vim.fn.expand(vim.fn.stdpath('config') .. '/session/'),
+      })
+
+      -- restore the session for the current directory
+      vim.api.nvim_set_keymap("n", "<leader>qs", [[<cmd>lua require("persistence").load()<cr>]], {})
+      --
+      -- -- restore the last session
+      vim.api.nvim_set_keymap("n", "<leader>ql", [[<cmd>lua require("persistence").load({ last = true })<cr>]], {})
+      --
+      -- -- stop Persistence => session won't be saved on exit
+      vim.api.nvim_set_keymap("n", "<leader>qd", [[<cmd>lua require("persistence").stop()<cr>]], {})
     end,
   }
 

@@ -189,6 +189,7 @@ return require("packer").startup(function(use)
       -- require("lualine").setup { options = { theme = "auto" }, }
     end,
     wants = "nvim-web-devicons",
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true }
   }
 
   use {

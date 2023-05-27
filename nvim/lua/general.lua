@@ -13,6 +13,7 @@ vim.o.bg = 'light'
 
 -- Settings
 vim.g.mapleader = ' '
+vim.g.maplocalleader = '\\'
 
 --opt.clipboard = "unnamedplus" -- allows neovim to access the system clipboard -- issues with gitSigns preview hunk
 opt.cmdheight = 2 -- more space in the neovim command line for displaying messages

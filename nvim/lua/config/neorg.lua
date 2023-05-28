@@ -33,12 +33,14 @@ function M.setup()
         config = {
             workspaces = {
               neorg = "~/neorg",
+              default = "~/neorg",
               tech  = "~/neorg/tech",
               exercise  = "~/neorg/exercise",
               health  = "~/neorg/health",
               music  = "~/neorg/music",
               gtd  = "~/neorg/gtd",
-              languages  = "~/neorg/language",
+              spanish  = "~/neorg/language/spanish",
+              japanese  = "~/neorg/language/japanese",
               finance  = "~/neorg/finance",
               projects  = "~/neorg/projects",
               productivity  = "~/neorg/productivity",

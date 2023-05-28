@@ -3,7 +3,6 @@ local M = {}
 function M.setup()
   local status_ok, _ = pcall(require, "gitsigns")
   if not status_ok then
-    -- TODO Better error handling
     print("Error loading gitsigns")
     return
   end

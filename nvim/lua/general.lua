@@ -57,10 +57,10 @@ vim.api.nvim_set_keymap("n", "<backspace>h", "<cmd>noh<CR>", { silent = true })
 -- vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>tabnew<CR>", { silent = true })
 
 -- better window movement
--- vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { silent = true })
--- vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { silent = true })
--- vim.api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { silent = true })
--- vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { silent = true })
+vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { silent = true })
+vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { silent = true })
+vim.api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { silent = true })
+vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { silent = true })
 
 -- Terminal window navigation
 -- Disabled because I like to use <C-l> to clear the terminal

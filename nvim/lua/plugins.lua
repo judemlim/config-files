@@ -68,6 +68,20 @@ return require("packer").startup(function(use)
 
   use "MattesGroeger/vim-bookmarks"
 
+  -- Lua
+  use {
+    "folke/which-key.nvim",
+    config = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+      require("which-key").setup {
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      }
+    end
+  }
+
   -- extend % to things like 'if' and 'while'
   use { "andymass/vim-matchup", event = "VimEnter" }
   --
@@ -152,13 +166,13 @@ return require("packer").startup(function(use)
       })
 
       -- restore the session for the current directory
-      vim.api.nvim_set_keymap("n", "<leader>qs", [[<cmd>lua require("persistence").load()<cr>]], {})
+      vim.api.nvim_set_keymap("n", "<leader>ss", [[<cmd>lua require("persistence").load()<cr>]], {})
       --
       -- -- restore the last session
-      vim.api.nvim_set_keymap("n", "<leader>ql", [[<cmd>lua require("persistence").load({ last = true })<cr>]], {})
+      vim.api.nvim_set_keymap("n", "<leader>sl", [[<cmd>lua require("persistence").load({ last = true })<cr>]], {})
       --
       -- -- stop Persistence => session won't be saved on exit
-      vim.api.nvim_set_keymap("n", "<leader>qd", [[<cmd>lua require("persistence").stop()<cr>]], {})
+      vim.api.nvim_set_keymap("n", "<leader>sd", [[<cmd>lua require("persistence").stop()<cr>]], {})
     end,
   }
 

@@ -1,0 +1,33 @@
+[user]
+	name = judemlim
+	email = judemlim@gmail.com
+[alias]
+	st = status --short --branch
+	po = push origin
+	pof = push origin -f
+	pos = push origin --set-upstream
+        l = log
+        ri = rebase -i
+        rio = rebase -i origin/main
+        b = branch
+        D = branch -D
+        c = checkout
+        cb = checkout -b
+        f = fetch --all
+        pu = pull --rebase
+        ca = commit --amend
+        a = add
+        decap = reset HEAD^
+[core]
+	editor = nvim
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

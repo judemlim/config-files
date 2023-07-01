@@ -16,7 +16,7 @@ function M.setup()
           strategy = "nested"
         }
       },
-      ["core.manoeuvre"] = {},
+      -- ["core.manoeuvre"] = {},
       -- ["core.gtd.base"] = {
       --   config = {
       --     workspace = "gtd"

@@ -270,6 +270,7 @@ myKeys =
      , ("M-C-p", namedScratchpadAction scratchpads "plover")
      , ("Print", spawn "gnome-screenshot")
      , ("M-p", spawn "rofi -show drun")
+     , ("M-o", spawn "rofi -show drun -run-shell-command 'alacritty -e zsh -ic \"{cmd} && read\"'")
      -- Pneumonic is 'all'
      , ("M-a", spawn "rofi -show window")
      , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")

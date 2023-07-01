@@ -28,7 +28,7 @@ function M.setup()
       initial_mode = "insert",
       selection_strategy = "reset",
       sorting_strategy = "ascending",
-      layout_strategy = "vertical",
+      -- layout_strategy = "vertical",
       layout_config = {
         horizontal = {
           mirror = false,

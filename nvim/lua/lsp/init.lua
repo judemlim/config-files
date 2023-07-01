@@ -13,7 +13,8 @@ local servers = {
   cssls = {},
   dockerls = {},
   tsserver = {},
-  yamlls = {},
+  clangd = {},
+  -- yamlls = {},
   -- eslint = {},
   html = {},
   -- jsonls = {
@@ -99,7 +100,13 @@ for server, opts in pairs(servers) do
   else
     require("lspconfig")[server].setup(opts)
   end
-  -- If server = motoko then import the motoko module here
+
+
+  -- Issue with Clangd and utf-16 encoding
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.offsetEncoding = { "utf-16" }
+  require("lspconfig").clangd.setup({ capabilities = capabilities })
+
 end
 
 

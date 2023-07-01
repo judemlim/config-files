@@ -3,16 +3,13 @@ local M = {}
 function M.setup()
   local status_ok, actions = pcall(require, "nvim-treesitter.configs")
   if not status_ok then
-    -- TODO Better error handling
     print("Error loading treesitter")
     return
   end
   require'nvim-treesitter.configs'.setup {
     nsure_installed = {"javascript","typescript", "lua", "haskell", "graphql"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-    --ignore_install = { "javascript" }, -- List of parsers to ignore installing
     highlight = {
-      enable = true,              -- false will disable the whole extension
-      --disable = {"typescript", "javascript"},  -- list of language that will be disabled
+      enable = true,
     },
     autotag = {
       enable = true,
@@ -76,10 +73,6 @@ function M.setup()
       --termcolors = {} -- table of colour name strings
     }
   }
-
-  local ft_to_parser = require"nvim-treesitter.parsers".filetype_to_parsername
-  ft_to_parser.mo = "swift"
-  ft_to_parser.gdmo = "swift"
 
 end
 

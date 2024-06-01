@@ -7,9 +7,9 @@ local opt = vim.opt
 cmd "filetype plugin indent on"
 
 -- Colorscheme
-vim.o.termguicolors = true
-vim.api.nvim_command('colorscheme gruvbox')
-vim.o.bg = 'light'
+-- vim.o.termguicolors = true
+-- vim.api.nvim_command('colorscheme gruvbox')
+-- vim.o.bg = 'light'
 
 -- Settings
 vim.g.mapleader = ' '

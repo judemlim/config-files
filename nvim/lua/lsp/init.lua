@@ -13,6 +13,7 @@ local servers = {
   cssls = {},
   dockerls = {},
   tsserver = {},
+  -- typescript_language_server = {},
   clangd = {},
   -- yamlls = {},
   -- eslint = {},
@@ -94,12 +95,12 @@ local options = {
 
 for server, opts in pairs(servers) do
   opts = vim.tbl_deep_extend("force", {}, options, opts or {})
-  -- require("lspconfig")[server].setup(opts)
-  if server == "tsserver" then
-      require("typescript").setup({ server = opts })
-  else
-    require("lspconfig")[server].setup(opts)
-  end
+  require("lspconfig")[server].setup(opts)
+  -- if server == "tsserver" then
+  --     require("typescript").setup({ server = opts })
+  -- else
+  --   require("lspconfig")[server].setup(opts)
+  -- end
 
 
   -- Issue with Clangd and utf-16 encoding

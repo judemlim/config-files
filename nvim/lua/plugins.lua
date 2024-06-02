@@ -6,6 +6,7 @@
 vim.cmd([[packadd cfilter]])
 
 require("lazy").setup({
+        "adl-lang/adl-vim-highlight",
 	"tpope/vim-rhubarb",
 	{
 		"windwp/nvim-autopairs",

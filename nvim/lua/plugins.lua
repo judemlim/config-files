@@ -300,18 +300,18 @@ require("lazy").setup({
 	-- },
 
 	---- Git integration ----
-	{
-		"tpope/vim-fugitive",
-		config = function()
-			vim.api.nvim_set_keymap("n", "<leader>gs", "<cmd>Git<CR>", {})
-			-- Note that the semicolon is mapped to colon
-			vim.api.nvim_set_keymap("n", "<leader>g<space>", ";Git ", {})
-			vim.api.nvim_set_keymap("n", "<leader>gb", "<cmd>Git blame<CR>", {})
-			-- Using diffview plugin to show differences now
-			-- vim.api.nvim_set_keymap('n', '<leader>gh', "<cmd>0Gclog<CR>", {})
-			-- vim.api.nvim_set_keymap('n', '<leader>gd', "<cmd>Gvdiffsplit<CR>", {})
-		end,
-	},
+	-- {
+	-- 	"tpope/vim-fugitive",
+	-- 	config = function()
+	-- 		vim.api.nvim_set_keymap("n", "<leader>gs", "<cmd>Git<CR>", {})
+	-- 		-- Note that the semicolon is mapped to colon
+	-- 		vim.api.nvim_set_keymap("n", "<leader>g<space>", ";Git ", {})
+	-- 		vim.api.nvim_set_keymap("n", "<leader>gb", "<cmd>Git blame<CR>", {})
+	-- 		-- Using diffview plugin to show differences now
+	-- 		-- vim.api.nvim_set_keymap('n', '<leader>gh', "<cmd>0Gclog<CR>", {})
+	-- 		-- vim.api.nvim_set_keymap('n', '<leader>gd', "<cmd>Gvdiffsplit<CR>", {})
+	-- 	end,
+	-- },
 	{
 		"pwntester/octo.nvim",
 		config = function()
@@ -447,6 +447,19 @@ require("lazy").setup({
 		"akinsho/nvim-toggleterm.lua",
 		config = function()
 			require("config.toggleterm").setup()
+			local Terminal = require("toggleterm.terminal").Terminal
+			local lazygit = Terminal:new({ cmd = "lazygit", hidden = true, direction = "float" })
+
+			function _lazygit_toggle()
+				lazygit:toggle()
+			end
+
+			vim.api.nvim_set_keymap(
+				"n",
+				"<leader>g",
+				"<cmd>lua _lazygit_toggle()<CR>",
+				{ noremap = true, silent = true }
+			)
 		end,
 	},
 
@@ -508,13 +521,23 @@ require("lazy").setup({
 	},
 	-- AI
 	{
-		"github/copilot.vim",
+		"CopilotC-Nvim/CopilotChat.nvim",
+		-- branch = "canary",
+		dependencies = {
+			{ "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+			{ "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+		},
+		-- opts = {
+		-- 	debug = true, -- Enable debugging
+		-- 	-- See Configuration section for rest
+		-- },
 		config = function()
-			vim.cmd([[
-                          imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
-                          let g:copilot_no_tab_map = v:true
-                        ]])
+			require("CopilotChat").setup({
+				debug = true, -- Enable debugging
+				-- See Configuration section for rest
+			})
 		end,
+		-- See Commands section for default commands if you want to lazy load on them
 	},
 	-- {
 	-- 	"jackMort/ChatGPT.nvim",

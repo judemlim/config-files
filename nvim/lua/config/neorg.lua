@@ -16,7 +16,8 @@ function M.setup()
 					strategy = "nested",
 				},
 			},
-			-- ["core.manoeuvre"] = {},
+			["core.ui.calendar"] = {},
+			["core.qol.todo_items"] = {},
 			-- ["core.gtd.base"] = {
 			--   config = {
 			--     workspace = "gtd"

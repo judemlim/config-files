@@ -6,7 +6,7 @@
 vim.cmd([[packadd cfilter]])
 
 require("lazy").setup({
-        "adl-lang/adl-vim-highlight",
+	"adl-lang/adl-vim-highlight",
 	"tpope/vim-rhubarb",
 	{
 		"windwp/nvim-autopairs",
@@ -28,6 +28,8 @@ require("lazy").setup({
 	"tpope/vim-repeat",
 
 	"MattesGroeger/vim-bookmarks",
+
+	"kevinhwang91/nvim-bqf",
 
 	{
 		"folke/ts-comments.nvim",
@@ -92,12 +94,39 @@ require("lazy").setup({
 		"folke/noice.nvim",
 		event = "VeryLazy",
 		config = function()
-			require("noice").setup()
-			vim.api.nvim_set_keymap("n", "<backspace>n", "<cmd>lua require('notify').dismiss()<CR>", {})
+			require("noice").setup({
+				views = {
+					cmdline_popup = {
+						position = {
+							row = 3,
+							col = "50%",
+						},
+						size = {
+							width = 60,
+							height = "auto",
+						},
+					},
+					popupmenu = {
+						relative = "editor",
+						position = {
+							row = 8,
+							col = "50%",
+						},
+						size = {
+							width = 60,
+							height = 10,
+						},
+						border = {
+							style = "single",
+							padding = { 0, 1 },
+						},
+						win_options = {
+							winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" },
+						},
+					},
+				},
+			})
 		end,
-		opts = {
-			-- add any options here
-		},
 		dependencies = {
 			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
 			"MunifTanjim/nui.nvim",
@@ -119,6 +148,12 @@ require("lazy").setup({
 			-- or leave it empty to use the default settings
 			-- refer to the configuration section below
 		},
+	},
+	{
+		"rcarriga/nvim-notify",
+		config = function()
+			vim.api.nvim_set_keymap("n", "<backspace>n", "<cmd>lua require('notify').dismiss()<CR>", {})
+		end,
 	},
 	-- Formatter --
 	{
@@ -247,6 +282,22 @@ require("lazy").setup({
 		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 		opts = {},
 	},
+	-- {
+	-- 	"nvimtools/none-ls.nvim",
+	-- 	dependencies = {
+	-- 		"nvimtools/none-ls-extras.nvim",
+	-- 	},
+	-- 	config = function()
+	-- 		local null_ls = require("null-ls")
+	-- 		null_ls.setup({
+	-- 			sources = {
+	-- 				require("none-ls.diagnostics.cpplint"),
+	-- 				require("none-ls.formatting.jq"),
+	-- 				require("none-ls.code_actions.eslint"),
+	-- 			},
+	-- 		})
+	-- 	end,
+	-- },
 
 	---- Git integration ----
 	{
@@ -276,10 +327,6 @@ require("lazy").setup({
 			require("config.diffview").setup()
 		end,
 	},
-	--{
-	--"junegunn/gv.vim",
-	--config = function() end,
-	--}
 	{
 
 		"lewis6991/gitsigns.nvim",
@@ -288,15 +335,6 @@ require("lazy").setup({
 		},
 		config = function()
 			require("config.gitsigns").setup()
-		end,
-	},
-	{
-		"github/copilot.vim",
-		config = function()
-			vim.cmd([[
-                          imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
-                          let g:copilot_no_tab_map = v:true
-                        ]])
 		end,
 	},
 	---- Debugger ----
@@ -374,8 +412,31 @@ require("lazy").setup({
 		event = "VimEnter",
 		-- config = [[require('config.lualine')]],
 		config = function()
-			require("lualine").setup({})
-			-- require("lualine").setup { options = { theme = "auto" }, }
+			require("lualine").setup({
+				sections = {
+					lualine_x = {
+						{
+							require("noice").api.status.message.get_hl,
+							cond = require("noice").api.status.message.has,
+						},
+						{
+							require("noice").api.status.command.get,
+							cond = require("noice").api.status.command.has,
+							color = { fg = "#ff9e64" },
+						},
+						{
+							require("noice").api.status.mode.get,
+							cond = require("noice").api.status.mode.has,
+							color = { fg = "#ff9e64" },
+						},
+						{
+							require("noice").api.status.search.get,
+							cond = require("noice").api.status.search.has,
+							color = { fg = "#ff9e64" },
+						},
+					},
+				},
+			})
 		end,
 		-- wants = "nvim-web-devicons",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -445,6 +506,29 @@ require("lazy").setup({
 			vim.o.bg = "light"
 		end,
 	},
+	-- AI
+	{
+		"github/copilot.vim",
+		config = function()
+			vim.cmd([[
+                          imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
+                          let g:copilot_no_tab_map = v:true
+                        ]])
+		end,
+	},
+	-- {
+	-- 	"jackMort/ChatGPT.nvim",
+	-- 	event = "VeryLazy",
+	-- 	config = function()
+	-- 		require("chatgpt").setup()
+	-- 	end,
+	-- 	dependencies = {
+	-- 		"MunifTanjim/nui.nvim",
+	-- 		"nvim-lua/plenary.nvim",
+	-- 		"folke/trouble.nvim",
+	-- 		"nvim-telescope/telescope.nvim",
+	-- 	},
+	-- },
 }, {})
 
 --return require("packer").startup(function(use)

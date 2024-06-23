@@ -234,20 +234,52 @@ require("lazy").setup({
 			end
 			local lspconfig = require("lspconfig")
 			-- enable both language-servers for both eslint and typescript:
-			for _, server in pairs({ "eslint" }) do
+			local servers = {
+				pyright = {},
+				eslint = {},
+				-- ts-tools" = {},
+				lua_ls = {
+					settings = {
+						Lua = {
+							runtime = {
+								-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+								version = "LuaJIT",
+							},
+							diagnostics = {
+								-- Get the language server to recognize the `vim` global
+								globals = { "vim" },
+							},
+							workspace = {
+								-- Make the server aware of Neovim runtime files
+								library = vim.api.nvim_get_runtime_file("", true),
+							},
+							-- Do not send telemetry data containing a randomized but unique identifier
+							telemetry = {
+								enable = false,
+							},
+						},
+					},
+				},
+			}
+			for server, opts in pairs(servers) do
 				lspconfig[server].setup({
 					capabilities = lsp_capabilities,
 					on_attach = lsp_on_attach,
 				})
 			end
 		end,
-		ft = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+		-- ft = { "javascript", "javascriptreact", "typescript", "typescriptreact", "python" },
 	},
-	{
-		"mfussenegger/nvim-jdtls",
-	},
+	-- {
+	-- 	"mfussenegger/nvim-jdtls",
+	-- },
 	{
 		"williamboman/mason.nvim",
+		opts = {
+			ensure_installed = {
+				"pyright",
+			},
+		},
 		config = function()
 			require("mason").setup()
 		end,
@@ -538,6 +570,20 @@ require("lazy").setup({
 			})
 		end,
 		-- See Commands section for default commands if you want to lazy load on them
+	},
+	{
+		"jpmcb/nvim-llama",
+		config = function()
+			require("nvim-llama").setup({
+				{
+					-- See plugin debugging logs
+					debug = false,
+
+					-- The model for ollama to use. This model will be automatically downloaded.
+					model = "codellama",
+				},
+			})
+		end,
 	},
 	-- {
 	-- 	"jackMort/ChatGPT.nvim",

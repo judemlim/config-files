@@ -64,15 +64,15 @@ vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { silent = true })
 
 -- Terminal window navigation
 -- Disabled because I like to use <C-l> to clear the terminal
-vim.api.nvim_set_keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("t", "<C-j>", "<C-\\><C-N><C-w>j", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("i", "<C-h>", "<C-\\><C-N><C-w>h", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("i", "<C-j>", "<C-\\><C-N><C-w>j", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("i", "<C-k>", "<C-\\><C-N><C-w>k", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("i", "<C-l>", "<C-\\><C-N><C-w>l", {silent = true, noremap = true})
-vim.api.nvim_set_keymap("t", "<Esc>", "<C-\\><C-n>", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("t", "<C-j>", "<C-\\><C-N><C-w>j", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("i", "<C-h>", "<C-\\><C-N><C-w>h", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("i", "<C-j>", "<C-\\><C-N><C-w>j", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("i", "<C-k>", "<C-\\><C-N><C-w>k", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("i", "<C-l>", "<C-\\><C-N><C-w>l", {silent = true, noremap = true})
+-- vim.api.nvim_set_keymap("t", "<Esc>", "<C-\\><C-n>", {silent = true, noremap = true})
 
 -- Resize with arrows
 vim.api.nvim_set_keymap("n", "<C-Up>", "<cmd>resize -2<CR>", { silent = true })

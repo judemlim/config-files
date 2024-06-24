@@ -2,8 +2,8 @@
 -- Heavily copied Folke's .config layout https://github.com/folke/dot/blob/master/config/nvim/lua/config/lsp/init.lua
 local function on_attach(client, bufnr)
   -- require("nvim-navic").attach(client, bufnr)
-  require("lsp.formatting").setup(client, bufnr)
-  require("lsp.diagnostics").setup(client, bufnr)
+  -- require("lsp.formatting").setup(client, bufnr) -- FIX
+  -- require("lsp.diagnostics").setup(client, bufnr)
   require("lsp.keys").setup(client, bufnr)
 end
 
@@ -103,16 +103,6 @@ for server, opts in pairs(servers) do
   -- end
 
 
-  -- Issue with Clangd and utf-16 encoding
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities.offsetEncoding = { "utf-16" }
-  require("lspconfig").clangd.setup({ capabilities = capabilities })
-
 end
-
-
--- Currently manually starting the motoko lsp
-require "lsp.motoko_manual"
-
 
 

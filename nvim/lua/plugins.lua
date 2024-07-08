@@ -268,7 +268,7 @@ require("lazy").setup({
 				})
 			end
 		end,
-		-- ft = { "javascript", "javascriptreact", "typescript", "typescriptreact", "python" },
+		ft = { "javascript", "javascriptreact", "typescript", "typescriptreact", "python" },
 	},
 	-- {
 	-- 	"mfussenegger/nvim-jdtls",
@@ -378,18 +378,18 @@ require("lazy").setup({
 	-- },
 
 	---- Git integration ----
-	-- {
-	-- 	"tpope/vim-fugitive",
-	-- 	config = function()
-	-- 		vim.api.nvim_set_keymap("n", "<leader>gs", "<cmd>Git<CR>", {})
-	-- 		-- Note that the semicolon is mapped to colon
-	-- 		vim.api.nvim_set_keymap("n", "<leader>g<space>", ";Git ", {})
-	-- 		vim.api.nvim_set_keymap("n", "<leader>gb", "<cmd>Git blame<CR>", {})
-	-- 		-- Using diffview plugin to show differences now
-	-- 		-- vim.api.nvim_set_keymap('n', '<leader>gh', "<cmd>0Gclog<CR>", {})
-	-- 		-- vim.api.nvim_set_keymap('n', '<leader>gd', "<cmd>Gvdiffsplit<CR>", {})
-	-- 	end,
-	-- },
+	{
+		"tpope/vim-fugitive",
+		config = function()
+			vim.api.nvim_set_keymap("n", "<leader>gs", "<cmd>Git<CR>", {})
+			-- Note that the semicolon is mapped to colon
+			vim.api.nvim_set_keymap("n", "<leader>g<space>", ";Git ", {})
+			vim.api.nvim_set_keymap("n", "<leader>gb", "<cmd>Git blame<CR>", {})
+			-- Using diffview plugin to show differences now
+			-- vim.api.nvim_set_keymap('n', '<leader>gh', "<cmd>0Gclog<CR>", {})
+			-- vim.api.nvim_set_keymap('n', '<leader>gd', "<cmd>Gvdiffsplit<CR>", {})
+		end,
+	},
 	{
 		"pwntester/octo.nvim",
 		config = function()
@@ -619,25 +619,25 @@ require("lazy").setup({
 		end,
 	},
 	-- AI
-	{
-		"CopilotC-Nvim/CopilotChat.nvim",
-		-- branch = "canary",
-		dependencies = {
-			{ "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
-			{ "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
-		},
-		-- opts = {
-		-- 	debug = true, -- Enable debugging
-		-- 	-- See Configuration section for rest
-		-- },
-		config = function()
-			require("CopilotChat").setup({
-				debug = true, -- Enable debugging
-				-- See Configuration section for rest
-			})
-		end,
-		-- See Commands section for default commands if you want to lazy load on them
-	},
+	-- {
+	-- 	"CopilotC-Nvim/CopilotChat.nvim",
+	-- 	-- branch = "canary",
+	-- 	dependencies = {
+	-- 		{ "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+	-- 		{ "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+	-- 	},
+	-- 	-- opts = {
+	-- 	-- 	debug = true, -- Enable debugging
+	-- 	-- 	-- See Configuration section for rest
+	-- 	-- },
+	-- 	config = function()
+	-- 		require("CopilotChat").setup({
+	-- 			debug = true, -- Enable debugging
+	-- 			-- See Configuration section for rest
+	-- 		})
+	-- 	end,
+	-- 	-- See Commands section for default commands if you want to lazy load on them
+	-- },
 	{
 		"jpmcb/nvim-llama",
 		config = function()

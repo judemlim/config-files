@@ -236,6 +236,7 @@ require("lazy").setup({
 			-- enable both language-servers for both eslint and typescript:
 			local servers = {
 				pyright = {},
+				-- tsserver = {},
 				eslint = {},
 				-- ts-tools" = {},
 				lua_ls = {

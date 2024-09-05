@@ -242,7 +242,7 @@ myKeys =
      , ("M-z", killAllOtherCopies)  -- kill copies of window on other workspaces
      , ("M-<Right>", moveTo Next $ Not emptyWS)
      , ("M-<Left>", moveTo Prev $ Not emptyWS)
-     , ("M-S-r", spawn rangerTerminal)
+     -- , ("M-S-r", spawn rangerTerminal)
      , ("M-S-a", sendMessage MirrorExpand)
      , ("M-S-z", sendMessage MirrorShrink)
      , ("M-h", sendMessage Expand)

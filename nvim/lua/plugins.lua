@@ -236,6 +236,7 @@ require("lazy").setup({
 			-- enable both language-servers for both eslint and typescript:
 			local servers = {
 				pyright = {},
+				prismals = {},
 				-- tsserver = {},
 				eslint = {},
 				-- ts-tools" = {},
@@ -270,6 +271,17 @@ require("lazy").setup({
 			end
 		end,
 		ft = { "javascript", "javascriptreact", "typescript", "typescriptreact", "python" },
+	},
+	{
+		"luckasRanarison/tailwind-tools.nvim",
+		name = "tailwind-tools",
+		build = ":UpdateRemotePlugins",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-telescope/telescope.nvim", -- optional
+			"neovim/nvim-lspconfig", -- optional
+		},
+		opts = {}, -- your configuration
 	},
 	-- {
 	-- 	"mfussenegger/nvim-jdtls",

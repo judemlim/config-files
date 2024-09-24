@@ -239,7 +239,7 @@ require("lazy").setup({
 				prismals = {},
 				-- tsserver = {},
 				eslint = {},
-				-- ts-tools" = {},
+				vtsls = {},
 				lua_ls = {
 					settings = {
 						Lua = {
@@ -313,66 +313,66 @@ require("lazy").setup({
 			require("config.neorg").setup()
 		end,
 	},
-	{
-		"pmizio/typescript-tools.nvim",
-		config = function()
-			-- Disable built in formatting to use conform.nvim instead
-			require("typescript-tools").setup({
-				on_attach = function(client)
-					client.server_capabilities.documentFormattingProvider = false
-					client.server_capabilities.documentRangeFormattingProvider = false
-					local bufopts = { noremap = true, silent = true, buffer = bufnr }
-					-- following keymap is based on both lspconfig and lsp-zero.nvim:
-					-- - https://github.com/neovim/nvim-lspconfig/blob/fd8f18fe819f1049d00de74817523f4823ba259a/README.md?plain=1#L79-L93
-					-- - https://github.com/VonHeikemen/lsp-zero.nvim/blob/18a5887631187f3f7c408ce545fd12b8aeceba06/lua/lsp-zero/server.lua#L285-L298
-					vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, bufopts)
-					vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
-					vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
-					-- vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
-					vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
-					vim.keymap.set("n", "go", vim.lsp.buf.type_definition, bufopts)
-					vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
-					--m.keymap.set('n', TODO   , vim.lsp.buf.code_action                           , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
-					--m.keymap.set('n', TODO   , function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>f
-					--m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
-					--
-					-- See `:help vim.lsp.*` for documentation on any of the below functions
-					vim.keymap.set("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", bufopts)
-					-- Use telescope instead
-					--buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', bufopts)
-					vim.keymap.set("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", bufopts)
-					vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", bufopts)
-					vim.keymap.set("n", "<C-space>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", bufopts)
-					vim.keymap.set("n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", bufopts)
-					vim.keymap.set("n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", bufopts)
-					vim.keymap.set(
-						"n",
-						"<leader>wl",
-						"<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>",
-						bufopts
-					)
-					vim.keymap.set("n", "<leader>D", "<cmd>lua vim.lsp.buf.type_definition()<CR>", bufopts)
-					vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", bufopts)
-					-- Conflicting with nerd commenter
-					vim.keymap.set("n", "<leader>a", "<cmd>lua vim.lsp.buf.code_action()<CR>", bufopts)
-					-- Use telescope instead once I learn how to add to quickfix list
-					vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", bufopts)
-
-					vim.keymap.set("n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", bufopts)
-					-- Jump to diagnostic and save into jumplist
-					vim.keymap.set("n", "<C-p>", "<cmd>lua vim.diagnostic.goto_prev()<CR><cmd> normal m'<CR>", bufopts)
-					vim.keymap.set("n", "<C-n>", "<cmd>lua vim.diagnostic.goto_next()<CR><cmd> normal m'<CR>", bufopts)
-					vim.keymap.set("n", "<leader>q", "<cmd>lua vim.diagnostic.set_loclist()<CR>", bufopts)
-					vim.keymap.set("n", "<leader>f", "<cmd>lua vim.lsp.buf.format({async = true})<CR>", bufopts)
-
-					vim.keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", {})
-					vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", {})
-				end,
-			})
-		end,
-		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-		opts = {},
-	},
+	-- {
+	-- 	"pmizio/typescript-tools.nvim",
+	-- 	config = function()
+	-- 		-- Disable built in formatting to use conform.nvim instead
+	-- 		require("typescript-tools").setup({
+	-- 			on_attach = function(client)
+	-- 				client.server_capabilities.documentFormattingProvider = false
+	-- 				client.server_capabilities.documentRangeFormattingProvider = false
+	-- 				local bufopts = { noremap = true, silent = true, buffer = bufnr }
+	-- 				-- following keymap is based on both lspconfig and lsp-zero.nvim:
+	-- 				-- - https://github.com/neovim/nvim-lspconfig/blob/fd8f18fe819f1049d00de74817523f4823ba259a/README.md?plain=1#L79-L93
+	-- 				-- - https://github.com/VonHeikemen/lsp-zero.nvim/blob/18a5887631187f3f7c408ce545fd12b8aeceba06/lua/lsp-zero/server.lua#L285-L298
+	-- 				vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, bufopts)
+	-- 				vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
+	-- 				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
+	-- 				-- vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
+	-- 				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
+	-- 				vim.keymap.set("n", "go", vim.lsp.buf.type_definition, bufopts)
+	-- 				vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
+	-- 				--m.keymap.set('n', TODO   , vim.lsp.buf.code_action                           , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
+	-- 				--m.keymap.set('n', TODO   , function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>f
+	-- 				--m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
+	-- 				--
+	-- 				-- See `:help vim.lsp.*` for documentation on any of the below functions
+	-- 				vim.keymap.set("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", bufopts)
+	-- 				-- Use telescope instead
+	-- 				--buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', bufopts)
+	-- 				vim.keymap.set("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", bufopts)
+	-- 				vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", bufopts)
+	-- 				vim.keymap.set("n", "<C-space>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", bufopts)
+	-- 				vim.keymap.set("n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", bufopts)
+	-- 				vim.keymap.set("n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", bufopts)
+	-- 				vim.keymap.set(
+	-- 					"n",
+	-- 					"<leader>wl",
+	-- 					"<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>",
+	-- 					bufopts
+	-- 				)
+	-- 				vim.keymap.set("n", "<leader>D", "<cmd>lua vim.lsp.buf.type_definition()<CR>", bufopts)
+	-- 				vim.keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", bufopts)
+	-- 				-- Conflicting with nerd commenter
+	-- 				vim.keymap.set("n", "<leader>a", "<cmd>lua vim.lsp.buf.code_action()<CR>", bufopts)
+	-- 				-- Use telescope instead once I learn how to add to quickfix list
+	-- 				vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", bufopts)
+	--
+	-- 				vim.keymap.set("n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", bufopts)
+	-- 				-- Jump to diagnostic and save into jumplist
+	-- 				vim.keymap.set("n", "<C-p>", "<cmd>lua vim.diagnostic.goto_prev()<CR><cmd> normal m'<CR>", bufopts)
+	-- 				vim.keymap.set("n", "<C-n>", "<cmd>lua vim.diagnostic.goto_next()<CR><cmd> normal m'<CR>", bufopts)
+	-- 				vim.keymap.set("n", "<leader>q", "<cmd>lua vim.diagnostic.set_loclist()<CR>", bufopts)
+	-- 				vim.keymap.set("n", "<leader>f", "<cmd>lua vim.lsp.buf.format({async = true})<CR>", bufopts)
+	--
+	-- 				vim.keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", {})
+	-- 				vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", {})
+	-- 			end,
+	-- 		})
+	-- 	end,
+	-- 	dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+	-- 	opts = {},
+	-- },
 	-- {
 	-- 	"nvimtools/none-ls.nvim",
 	-- 	dependencies = {
@@ -664,6 +664,43 @@ require("lazy").setup({
 				},
 			})
 		end,
+	},
+	{
+		"folke/trouble.nvim",
+		opts = {}, -- for default options, refer to the configuration section for custom setup.
+		cmd = "Trouble",
+		keys = {
+			{
+				"<leader>xx",
+				"<cmd>Trouble diagnostics toggle<cr>",
+				desc = "Diagnostics (Trouble)",
+			},
+			{
+				"<leader>xX",
+				"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+				desc = "Buffer Diagnostics (Trouble)",
+			},
+			{
+				"<leader>cs",
+				"<cmd>Trouble symbols toggle focus=false<cr>",
+				desc = "Symbols (Trouble)",
+			},
+			{
+				"<leader>cl",
+				"<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+				desc = "LSP Definitions / references / ... (Trouble)",
+			},
+			{
+				"<leader>xL",
+				"<cmd>Trouble loclist toggle<cr>",
+				desc = "Location List (Trouble)",
+			},
+			{
+				"<leader>xQ",
+				"<cmd>Trouble qflist toggle<cr>",
+				desc = "Quickfix List (Trouble)",
+			},
+		},
 	},
 	-- {
 	-- 	"jackMort/ChatGPT.nvim",
